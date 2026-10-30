@@ -19,31 +19,39 @@ function makeVector(a = 0, b = 0) {
 }
 
 //To render grid
-function renderGraph() {
+function renderGraph(theta = 0, scaling = 1) {
+    push()
+    translate(side / 2, side / 2)
+    rotate(radians(theta))
+    unit = unit * scaling
+    let origin = side / 2 * Math.SQRT2
+
     stroke("green")
     strokeWeight(3)
-    line(0, side / 2, side, side / 2)//x axis
-    line(side / 2, 0, side / 2, side)//y axis
+    line(-origin, 0, origin, 0) //x axis
+    line(0, -origin, 0, origin) //y axis
 
     strokeWeight(1)
-
-    let n_lines = Math.floor(side / (2 * unit));
+    let n_lines = Math.ceil((side * Math.SQRT2) / (unit * scaling));
     for (let i = 1; i <= n_lines; i++) {
-        // y grid lines
-        line(0, side / 2 + i * unit, side, side / 2 + i * unit);
-        line(0, side / 2 - i * unit, side, side / 2 - i * unit);
-
-        // x grid lines
-        line(side / 2 + i * unit, 0, side / 2 + i * unit, side);
-        line(side / 2 - i * unit, 0, side / 2 - i * unit, side);
+        // Horizontal grid lines
+        line(-origin, i * unit, origin, i * unit);
+        line(-origin, -i * unit, origin, -i * unit);
+        // Vertical grid lines
+        line(i * unit, -origin, i * unit, origin);
+        line(-i * unit, -origin, -i * unit, origin);
     }
-}
 
+    pop();
+}
 
 v1 = new makeVector(2, 3)
 console.log(v1.magnitude)
 
+//animate
+counter = 1;
 function draw() {
     background("#E5CBBA")
-    renderGraph()
+    renderGraph(counter, 1)
+    counter = counter + 0.25
 }
