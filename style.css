@@ -138,8 +138,20 @@ a:hover {
 
 .content {
     background-color: var(--panel);
-    margin: 3vh 5vw 1vh;
-    padding: 0.05vh 2vw;
+    margin: 3vh 5vw 1vh 5vw;
+    padding: 0.05vh 2vw 0.05vh 2vw;
+}
+
+#canvas {
+    display: block;
+    width: 90%;
+    margin: 3vh auto;
+    padding: 0;
+}
+
+#canvas canvas {
+    display: block;
+    margin: 0 auto;
 }
 
 .site-footer {
