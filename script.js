@@ -85,6 +85,49 @@ function renderVector(vector, progress, origin_x = 0, origin_y = 0) {
     pop();
 }
 
+// Translate Vector
+function translateVector(vector, progress, start_x, start_y, end_x, end_y) {
+    push();
+    translate(side / 2, side / 2);
+
+    stroke("red");
+    strokeWeight(2);
+    fill("red");
+
+    const origin_x = start_x + (end_x - start_x) * progress;
+    const origin_y = start_y + (end_y - start_y) * progress;
+
+    const tip_x = origin_x + vector.real_coff;
+    const tip_y = origin_y + vector.img_coff;
+    const dx = tip_x - origin_x;
+    const dy = tip_y - origin_y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+
+    if (distance > 0) {
+        const cos_theta = dx / distance;
+        const sine_theta = dy / distance;
+        const arrow_x = tip_x - dx / 11;
+        const arrow_y = tip_y - dy / 11;
+        const r = distance / 25;
+
+        const arrow_x1 = arrow_x - r * sine_theta;
+        const arrow_x2 = arrow_x + r * sine_theta;
+        const arrow_y1 = arrow_y + r * cos_theta;
+        const arrow_y2 = arrow_y - r * cos_theta;
+
+        triangle(
+            tip_x * unit, -tip_y * unit,
+            arrow_x1 * unit, -arrow_y1 * unit,
+            arrow_x2 * unit, -arrow_y2 * unit
+        );
+    }
+    line(
+        origin_x * unit, -origin_y * unit,
+        tip_x * unit, -tip_y * unit
+    );
+    pop();
+}
+
 v1 = new makeVector(2, 3)
 v2 = new makeVector(-1, -4)
 
@@ -92,6 +135,7 @@ v2 = new makeVector(-1, -4)
 let steps = [
     { op: 'make', p: v1, q: 0 },
     { op: 'make', p: v2, q: 0 },
+    { op: 'join', p: v1, q: v2 },
     { op: '+', p: v1, q: v2 },
     // more steps pushed here later
 ];
@@ -128,11 +172,12 @@ function renderStep(step, e) {
         renderVector(step.p, e)
     }
     if (step.op === 'join') {
-
+        renderVector(step.p, 1);
+        translateVector(step.q, e, 0, 0, step.p.real_coff, step.p.img_coff)
     }
     if (step.op === '+') {
         renderVector(step.p, 1)
-        renderVector(step.q, 1)
+        renderVector(step.q, 1, step.p.real_coff, step.p.img_coff)
         renderVector(
             (new makeVector(
                 step.p.real_coff + step.q.real_coff,
