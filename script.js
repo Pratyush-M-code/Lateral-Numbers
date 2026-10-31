@@ -54,17 +54,18 @@ function renderVector(vector, progress, origin_x = 0, origin_y = 0) {
     strokeWeight(2);
     fill("red");
 
-    const end_x = vector.real_coff * progress;
-    const end_y = vector.img_coff * progress;
+    const end_x = origin_x + vector.real_coff * progress;
+    const end_y = origin_y + vector.img_coff * progress;
     const dx = end_x - origin_x;
     const dy = end_y - origin_y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2)
 
-    if (vector.magnitude > 0) {
-        const cos_theta = dx / vector.magnitude;
-        const sine_theta = dy / vector.magnitude;
+    if (distance > 0) {
+        const cos_theta = dx / distance;
+        const sine_theta = dy / distance;
         const arrow_x = end_x - dx / 11;
         const arrow_y = end_y - dy / 11;
-        const r = vector.magnitude / 25;
+        const r = distance / 25;
 
         const arrow_x1 = arrow_x - r * sine_theta;
         const arrow_x2 = arrow_x + r * sine_theta;
@@ -85,12 +86,13 @@ function renderVector(vector, progress, origin_x = 0, origin_y = 0) {
 }
 
 v1 = new makeVector(2, 3)
-v2 = new makeVector(4, 5)
+v2 = new makeVector(-1, -4)
 
 //animate
 let steps = [
-    { op: '+', a: new makeVector(v1.real_coff, 0), b: new makeVector(0, v1.img_coff), result: new makeVector(v1.real_coff, v1.img_coff) },
-    { op: '+', a: v1, b: v2, result: new makeVector(v1.real_coff + v2.real_coff, v1.img_coff + v2.img_coff) }
+    { op: 'make', p: v1, q: 0 },
+    { op: 'make', p: v2, q: 0 },
+    { op: '+', p: v1, q: v2 },
     // more steps pushed here later
 ];
 let stepIndex = 0;
@@ -118,8 +120,36 @@ function draw() {
 }
 
 function renderStep(step, e) {
+    if (step.op === 'make') {
+        real_vec = new makeVector(step.p.real_coff, 0)
+        img_vec = new makeVector(0, step.p.img_coff)
+        renderVector(real_vec, 1);
+        renderVector(img_vec, 1)
+        renderVector(step.p, e)
+    }
+    if (step.op === 'join') {
+
+    }
     if (step.op === '+') {
-        renderVector(step.a, 1); // operand A stays fixed, fully drawn
-        renderVector(step.b, e, step.a.real_coff, step.a.img_coff); // operand B grows in, tip-to-tail from A
+        renderVector(step.p, 1)
+        renderVector(step.q, 1)
+        renderVector(
+            (new makeVector(
+                step.p.real_coff + step.q.real_coff,
+                step.p.img_coff + step.q.img_coff)),
+            e
+        )
+    }
+    if (step.op === '-') {
+
+    }
+    if (step.op === '*') {
+
+    }
+    if (step.op === '/') {
+
+    }
+    if (step.op === '^') {
+
     }
 }

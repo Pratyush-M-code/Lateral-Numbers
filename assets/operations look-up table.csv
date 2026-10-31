@@ -1,0 +1,8 @@
+﻿operator,p,q,result,action
+make,vector1,NaN,renderVector(vector1),Creates vector by joining components
+join,,,,
+"""+""",vector1,vector2,"makeVector(vector1+vector2), render(vector1+vector2)",Adds 2 vectors
+"""-""",,,,
+"""*""",,,,
+"""/""",,,,
+"""^""",,,,
