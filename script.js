@@ -13,6 +13,12 @@ function makeVector(a = 0, b = 0) {
     this.img_coff = b;
     this.magnitude = Math.pow(Math.pow(a, 2) + Math.pow(b, 2), 0.5)
     this.argument = Math.atan2(b, a)
+    this.origin_x = 0
+    this.origin_y = 0
+    this.end_x = function () { return this.origin_x + this.real_coff }
+    this.end_y = function () { return this.origin_y + this.img_coff }
+    this.real_vec = function () { return new makeVector(this.real_coff, 0) }
+    this.img_vec = function () { return new makeVector(0, this.img_coff) }
     this.print_output = function () {
         return this.real_coff + " + " + this.img_coff + "i";
     }
@@ -46,7 +52,7 @@ function renderGraph(theta = 0, scaling = 1) {
 }
 
 // Render Vector
-function renderVector(vector, progress, origin_x = 0, origin_y = 0) {
+function renderVector(vector, progress) {
     push();
     translate(side / 2, side / 2);
 
@@ -54,10 +60,10 @@ function renderVector(vector, progress, origin_x = 0, origin_y = 0) {
     strokeWeight(2);
     fill("red");
 
-    const end_x = origin_x + vector.real_coff * progress;
-    const end_y = origin_y + vector.img_coff * progress;
-    const dx = end_x - origin_x;
-    const dy = end_y - origin_y;
+    const end_x = vector.origin_x + vector.real_coff * progress;
+    const end_y = vector.origin_y + vector.img_coff * progress;
+    const dx = end_x - vector.origin_x;
+    const dy = end_y - vector.origin_y;
     const distance = Math.sqrt(dx ** 2 + dy ** 2)
 
     if (distance > 0) {
@@ -79,20 +85,25 @@ function renderVector(vector, progress, origin_x = 0, origin_y = 0) {
         );
     }
     line(
-        origin_x * unit, -origin_y * unit,
+        vector.origin_x * unit, -vector.origin_y * unit,
         end_x * unit, -end_y * unit
     );
     pop();
 }
 
 // Translate Vector
-function translateVector(vector, progress, start_x, start_y, end_x, end_y) {
+function translateVector(vector, progress, end_vector) {
     push();
     translate(side / 2, side / 2);
 
     stroke("red");
     strokeWeight(2);
     fill("red");
+
+    const start_x = vector.origin_x;
+    const start_y = vector.origin_y;
+    const end_x = end_vector.end_x();
+    const end_y = end_vector.end_y();
 
     const origin_x = start_x + (end_x - start_x) * progress;
     const origin_y = start_y + (end_y - start_y) * progress;
@@ -125,6 +136,10 @@ function translateVector(vector, progress, start_x, start_y, end_x, end_y) {
         origin_x * unit, -origin_y * unit,
         tip_x * unit, -tip_y * unit
     );
+    if (progress >= 1) {
+        vector.origin_x = end_x;
+        vector.origin_y = end_y;
+    }
     pop();
 }
 
@@ -165,19 +180,19 @@ function draw() {
 
 function renderStep(step, e) {
     if (step.op === 'make') {
-        real_vec = new makeVector(step.p.real_coff, 0)
-        img_vec = new makeVector(0, step.p.img_coff)
-        renderVector(real_vec, 1);
-        renderVector(img_vec, 1)
+        renderVector(step.p.real_vec(), 1)
+        renderVector(step.p.img_vec(), 1)
         renderVector(step.p, e)
     }
     if (step.op === 'join') {
-        renderVector(step.p, 1);
-        translateVector(step.q, e, 0, 0, step.p.real_coff, step.p.img_coff)
+        renderVector(step.p, 1)
+        translateVector(step.q, e, step.p)
     }
     if (step.op === '+') {
         renderVector(step.p, 1)
-        renderVector(step.q, 1, step.p.real_coff, step.p.img_coff)
+        step.q.origin_x = step.p.end_x();
+        step.q.origin_y = step.p.end_y();
+        renderVector(step.q, 1)
         renderVector(
             (new makeVector(
                 step.p.real_coff + step.q.real_coff,
@@ -186,7 +201,13 @@ function renderStep(step, e) {
         )
     }
     if (step.op === '-') {
-
+        renderVector(step.p, 1)
+        renderVector(
+            (new makeVector(
+                step.p.real_coff - step.q.real_coff,
+                step.p.img_coff - step.q.img_coff)),
+            e
+        )
     }
     if (step.op === '*') {
 
