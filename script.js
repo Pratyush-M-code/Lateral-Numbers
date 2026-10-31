@@ -151,6 +151,7 @@ let steps = [
     { op: 'make', p: v1, q: 0 },
     { op: 'make', p: v2, q: 0 },
     { op: 'join', p: v1, q: v2 },
+    { op: '-', p: v2, q: 0 },
     { op: '+', p: v1, q: v2 },
     // more steps pushed here later
 ];
@@ -187,11 +188,13 @@ function renderStep(step, e) {
     if (step.op === 'join') {
         renderVector(step.p, 1)
         translateVector(step.q, e, step.p)
+        if (e >= 1) {
+            step.q.origin_x = step.p.end_x();
+            step.q.origin_y = step.p.end_y();
+        }
     }
     if (step.op === '+') {
         renderVector(step.p, 1)
-        step.q.origin_x = step.p.end_x();
-        step.q.origin_y = step.p.end_y();
         renderVector(step.q, 1)
         renderVector(
             (new makeVector(
@@ -201,13 +204,17 @@ function renderStep(step, e) {
         )
     }
     if (step.op === '-') {
-        renderVector(step.p, 1)
-        renderVector(
-            (new makeVector(
-                step.p.real_coff - step.q.real_coff,
-                step.p.img_coff - step.q.img_coff)),
-            e
-        )
+        let scale = 1 - 2 * e;
+
+        let flipped = new makeVector(step.p.real_coff * scale, step.p.img_coff * scale);
+        flipped.origin_x = step.p.origin_x;
+        flipped.origin_y = step.p.origin_y;
+        renderVector(flipped, 1)
+
+        if (e >= 1) {
+            step.p.real_coff = -step.p.real_coff;
+            step.p.img_coff = -step.p.img_coff;
+        }
     }
     if (step.op === '*') {
 
