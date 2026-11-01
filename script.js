@@ -7,6 +7,111 @@ function setup() {
     createCanvas(side, side).parent("canvas")
 }
 
+// Text Parser
+let typeBox = document.getElementById("equation")
+let text = typeBox.value
+typeBox.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        loadEquation()
+    }
+});
+const valid_operators = ['+', '-', '*']
+function parseText(text) {
+    let arr = text.split('')
+
+    //remove spaces
+    let normalized_arr = []
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === " ") {
+        }
+        else {
+            normalized_arr.push(arr[i])
+        }
+    }
+
+    //decision tree
+    let bracket_loop = false;
+
+    // Number reader for negatives and decimals
+    function readNumber(i, array) {
+        let number = ""
+        if (array[i] === "-" || array[i] === '+') {
+            number = number + String(array[i])
+            i++
+        }
+
+        digits = /[0-9.]/
+        while (i < array.length && (digits.test(array[i]))) {
+            number = number + String(array[i])
+            i++
+        }
+
+        return {
+            value: Number(number),
+            index: i
+        }
+    }
+    function textToVector(i, array) {
+        if (array[i] !== '(') {
+            throw new Error("opening bracket missing" + i)
+        }
+        else {
+            i++
+        }
+
+        let real = readNumber(i, array)
+        i = real.index
+        let imaginary = readNumber(i, array)
+        i = imaginary.index
+
+        if (array[i] !== 'i') {
+            throw new Error("missing i");
+        }
+        else {
+            i++;
+        }
+
+        if (array[i] !== ')') {
+            throw new Error("missing )");
+        }
+        else {
+            i++;
+        }
+
+        return {
+            value: new makeVector(real.value, imaginary.value),
+            index: i
+        }
+    }
+
+    //to do
+    let first = textToVector(0, normalized_arr)
+    let operator = normalized_arr[first.index];
+
+    if (!valid_operators.includes(operator)) {
+        throw new Error("Invalid operator")
+    }
+
+    let second = textToVector(first.index + 1, normalized_arr);
+
+    steps = []
+    steps.push({ op: 'make', p: first.value, q: 0 });
+    steps.push({ op: 'make', p: second.value, q: 0 });
+    if (operator === '+') {
+        steps.push({ op: 'join', p: first.value, q: second.value });
+        steps.push({ op: '+', p: first.value, q: second.value });
+    }
+    else if (operator === '-') {
+        steps.push({ op: 'join', p: first.value, q: second.value });
+        steps.push({ op: '-', p: second.value });
+        steps.push({ op: '+', p: first.value, q: second.value });
+    }
+    else if (operator === '*') {
+        steps.push({ op: '*', p: first.value, q: second.value });
+    }
+    return steps;
+}
+
 // Colours
 let compontent_colour = "#C0392B"
 let actionable_colour = "#2A4D9B"
@@ -171,16 +276,33 @@ v1 = new makeVector(1, 2)
 v2 = new makeVector(-3, -1)
 
 //animate
-let steps = [
-    // { op: 'make', p: v1, q: 0 },
-    // { op: 'make', p: v2, q: 0 },
-    // { op: 'join', p: v1, q: v2 },
-    // { op: '-', p: v2, q: 0 },
-    // { op: '+', p: v1, q: v2 },
+let steps = [];
+function loadEquation() {
 
-    { op: '*', p: v1, q: v2 }
-    // more steps pushed here later
-];
+    let typeBox = document.getElementById("equation");
+    let text = typeBox.value;
+
+    try {
+        steps = parseText(text);
+
+        // Reset animation
+        stepIndex = 0;
+        progress = 0;
+        memory = [];
+
+        console.log(steps);
+
+    }
+    catch (error) {
+
+        steps = [];
+        stepIndex = 0;
+        progress = 0;
+        memory = [];
+
+        console.error(error.message);
+    }
+}
 let memory = [
     // { vector: , colour: }
 ]
