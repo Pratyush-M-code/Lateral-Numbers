@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Caudex:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -26,6 +26,9 @@
         <div id="navigation">
             <nav>
                 <a href="#intro">About</a>
+                <a href="#explanation">Usage</a>
+                <a href="#typebox">Try it Out!</a>
+                <a href="#reference">More</a>
             </nav>
         </div>
     </header>
@@ -62,6 +65,11 @@
                     Type your equation here!
                 </label>
                 <input type="text" id="equation" name="equation">
+                <br>
+                <label for="Reset">
+                    Let's see your equation!
+                </label>
+                <button onclick="loadEquation()" id="Reset">Reset</button>
             </p>
             <p></p>
         </div>

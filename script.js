@@ -1,7 +1,7 @@
 // init
 let el = document.getElementById("canvas")
 side = el.clientWidth
-let zoom = 1
+let zoom = 0.5
 let unit = (side / 10) * zoom
 function setup() {
     createCanvas(side, side).parent("canvas")

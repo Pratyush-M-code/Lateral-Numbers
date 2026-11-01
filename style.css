@@ -17,8 +17,8 @@
     --button-hover: #bcd2ee;
     --active: #e0533d;
 
-    --font-heading: "Playfair Display";
-    --font-body: "Source Sans 3";
+    --font-heading: "Cormorant Garamond";
+    --font-body: "Caudex";
 }
 
 body {
@@ -52,7 +52,7 @@ h1 {
     font-size: 3rem;
     font-family: var(--font-heading);
     line-height: 1;
-    font-weight: 400;
+    font-weight: 1400;
     font-style: normal;
     font-optical-sizing: auto;
 }
@@ -62,7 +62,7 @@ h2 {
     font-size: 2.25rem;
     font-family: var(--font-heading);
     line-height: 1;
-    font-weight: 400;
+    font-weight: 1400;
     font-style: normal;
     font-optical-sizing: auto;
 }
@@ -72,11 +72,30 @@ h3 {
     font-size: 1.75rem;
     font-family: var(--font-heading);
     line-height: 1;
-    font-weight: 300;
+    font-weight: 700;
     font-style: normal;
     font-optical-sizing: auto;
 }
 
+button {
+    background-color: var(--button);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 0.5px, 12px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--button-hover);
+    color: var(--active);
+}
+
+button:active {
+    transform: translateY(1px);
+}
 
 p {
     color: var(--text);
