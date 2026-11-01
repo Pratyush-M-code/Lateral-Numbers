@@ -30,27 +30,46 @@ function makeVector(a = 0, b = 0) {
 }
 
 //To render grid
-function renderGraph(colour = "green", weight = "3", theta = 0, scaling = 1) {
+function renderGraph(colour = "green", weight = "3", progress = null, unit_vector = null) {
     push()
     translate(side / 2, side / 2)
-    rotate(radians(theta))
-    let scaledUnit = unit * scaling;
     let origin = side / 2 * Math.SQRT2
 
-    stroke(colour)
-    strokeWeight(weight)
-    line(-origin, 0, origin, 0) //x axis
-    line(0, -origin, 0, origin) //y axis
+    if (progress === null) {
+        stroke(colour)
+        strokeWeight(weight)
+        line(-origin, 0, origin, 0) //x axis
+        line(0, -origin, 0, origin) //y axis
 
-    strokeWeight(Math.floor(weight / 3))
-    let n_lines = Math.ceil((side * Math.SQRT2) / (scaledUnit * scaling));
-    for (let i = 1; i <= n_lines; i++) {
-        // Horizontal grid lines
-        line(-origin, i * scaledUnit, origin, i * scaledUnit);
-        line(-origin, -i * scaledUnit, origin, -i * scaledUnit);
-        // Vertical grid lines
-        line(i * scaledUnit, -origin, i * scaledUnit, origin);
-        line(-i * scaledUnit, -origin, -i * scaledUnit, origin);
+        strokeWeight(Math.ceil(weight / 3))
+        let n_lines = Math.ceil((side * Math.SQRT2) / (unit));
+        for (let i = 1; i <= n_lines; i++) {
+            // Horizontal grid lines
+            line(-origin, i * unit, origin, i * unit);
+            line(-origin, -i * unit, origin, -i * unit);
+            // Vertical grid lines
+            line(i * unit, -origin, i * unit, origin);
+            line(-i * unit, -origin, -i * unit, origin);
+        }
+    }
+    else {
+        rotate(-unit_vector.argument * progress)
+        let scaledUnit = unit * (1 + (unit_vector.magnitude - 1) * progress);
+        stroke(colour)
+        strokeWeight(weight)
+        line(-origin, 0, origin, 0) //x axis
+        line(0, -origin, 0, origin) //y axis
+
+        strokeWeight(Math.ceil(weight / 3))
+        let n_lines = Math.ceil((side * Math.SQRT2) / (scaledUnit));
+        for (let i = 1; i <= n_lines; i++) {
+            // Horizontal grid lines
+            line(-origin, i * scaledUnit, origin, i * scaledUnit);
+            line(-origin, -i * scaledUnit, origin, -i * scaledUnit);
+            // Vertical grid lines
+            line(i * scaledUnit, -origin, i * scaledUnit, origin);
+            line(-i * scaledUnit, -origin, -i * scaledUnit, origin);
+        }
     }
 
     pop();
@@ -148,16 +167,18 @@ function translateVector(colour, vector, progress, end_vector) {
     pop();
 }
 
-v1 = new makeVector(2, 3)
-v2 = new makeVector(-1, -4)
+v1 = new makeVector(1, 2)
+v2 = new makeVector(-3, -1)
 
 //animate
 let steps = [
-    { op: 'make', p: v1, q: 0 },
-    { op: 'make', p: v2, q: 0 },
-    { op: 'join', p: v1, q: v2 },
-    { op: '-', p: v2, q: 0 },
-    { op: '+', p: v1, q: v2 },
+    // { op: 'make', p: v1, q: 0 },
+    // { op: 'make', p: v2, q: 0 },
+    // { op: 'join', p: v1, q: v2 },
+    // { op: '-', p: v2, q: 0 },
+    // { op: '+', p: v1, q: v2 },
+
+    { op: '*', p: v1, q: v2 }
     // more steps pushed here later
 ];
 let memory = [
@@ -168,7 +189,7 @@ let progress = 0;
 let animationSpeed = 0.01;
 function draw() {
     background("#E5CBBA");
-    renderGraph("green", 3, 0, 1);
+    renderGraph("green", 3)
 
     if (stepIndex < steps.length) {
         let step = steps[stepIndex];
@@ -247,7 +268,34 @@ function renderStep(step, e) {
         }
     }
     if (step.op === '*') {
+        clearFromMemory(step)
+        let unit_vector = new makeVector(step.p.real_coff, step.p.img_coff)
+        let instant_argument = step.p.argument * e;
+        let instant_magnitude = 1 + (step.p.magnitude - 1) * e;
 
+        renderGraph("black", 2, e, unit_vector)
+        renderVector(compontent_colour, step.p, 1)
+        renderVector(compontent_colour, step.q, 1)
+
+        let moving_unit = new makeVector(
+            instant_magnitude * Math.cos(instant_argument),
+            instant_magnitude * Math.sin(instant_argument)
+        );
+        renderVector(actionable_colour, moving_unit, 1)
+
+        let current = new makeVector(
+            step.q.magnitude * instant_magnitude * Math.cos(step.q.argument + instant_argument),
+            step.q.magnitude * instant_magnitude * Math.sin(step.q.argument + instant_argument)
+        );
+        renderVector(resultant_colour, current, 1)
+
+        if (e >= 1) {
+            let product = new makeVector(
+                step.p.real_coff * step.q.real_coff - step.p.img_coff * step.q.img_coff,
+                step.p.real_coff * step.q.img_coff + step.p.img_coff * step.q.real_coff
+            );
+            memory.push({ colour: resultant_colour, vector: product })
+        }
     }
     if (step.op === '/') {
 
