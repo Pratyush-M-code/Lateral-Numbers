@@ -67,6 +67,17 @@ h2 {
     font-optical-sizing: auto;
 }
 
+h3 {
+    color: var(--h2);
+    font-size: 1.75rem;
+    font-family: var(--font-heading);
+    line-height: 1;
+    font-weight: 300;
+    font-style: normal;
+    font-optical-sizing: auto;
+}
+
+
 p {
     color: var(--text);
     font-size: 1.5rem;

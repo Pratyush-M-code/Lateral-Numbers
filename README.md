@@ -15,6 +15,17 @@ This project is to help build an intuitive understanding of Complex numbers and 
 
 - Cool UI!
 
+### Test Parser
+
+- readNumber: Takes array and extracts numbers
+- textToVector: Pretty much whats in the name
+
+### Operations
+
+- Addition(+): To add 2 complex numbers together
+- Subtraction(-): To subtract 2 complex numbers.
+- Multiplication(*): To scale the cartestian plane to multiply 2 complex numbers together.
+
 ### Tech Stack
 
 - **JavaScript**

@@ -115,7 +115,9 @@ function parseText(text) {
 // Colours
 let compontent_colour = "#C0392B"
 let actionable_colour = "#2A4D9B"
-let resultant_colour = "#347A68"
+let resultant_colour = "#76528B"
+let graph_colour = "#347A68"
+let actionable_graph_colour = "#A66B35"
 
 // To make vectors in the format (a + ib)
 function makeVector(a = 0, b = 0) {
@@ -135,7 +137,7 @@ function makeVector(a = 0, b = 0) {
 }
 
 //To render grid
-function renderGraph(colour = "green", weight = "3", progress = null, unit_vector = null) {
+function renderGraph(colour = graph_colour, weight = "3", progress = null, unit_vector = null) {
     push()
     translate(side / 2, side / 2)
     let origin = side / 2 * Math.SQRT2
@@ -311,7 +313,7 @@ let progress = 0;
 let animationSpeed = 0.01;
 function draw() {
     background("#E5CBBA");
-    renderGraph("green", 3)
+    renderGraph(graph_colour, 3)
 
     if (stepIndex < steps.length) {
         let step = steps[stepIndex];
@@ -395,7 +397,7 @@ function renderStep(step, e) {
         let instant_argument = step.p.argument * e;
         let instant_magnitude = 1 + (step.p.magnitude - 1) * e;
 
-        renderGraph("black", 2, e, unit_vector)
+        renderGraph(actionable_graph_colour, 2, e, unit_vector)
         renderVector(compontent_colour, step.p, 1)
         renderVector(compontent_colour, step.q, 1)
 
