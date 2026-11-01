@@ -7,6 +7,11 @@ function setup() {
     createCanvas(side, side).parent("canvas")
 }
 
+// Colours
+let compontent_colour = "#C0392B"
+let actionable_colour = "#2A4D9B"
+let resultant_colour = "#347A68"
+
 // To make vectors in the format (a + ib)
 function makeVector(a = 0, b = 0) {
     this.real_coff = a;
@@ -25,19 +30,19 @@ function makeVector(a = 0, b = 0) {
 }
 
 //To render grid
-function renderGraph(theta = 0, scaling = 1) {
+function renderGraph(colour = "green", weight = "3", theta = 0, scaling = 1) {
     push()
     translate(side / 2, side / 2)
     rotate(radians(theta))
     let scaledUnit = unit * scaling;
     let origin = side / 2 * Math.SQRT2
 
-    stroke("green")
-    strokeWeight(3)
+    stroke(colour)
+    strokeWeight(weight)
     line(-origin, 0, origin, 0) //x axis
     line(0, -origin, 0, origin) //y axis
 
-    strokeWeight(1)
+    strokeWeight(Math.floor(weight / 3))
     let n_lines = Math.ceil((side * Math.SQRT2) / (scaledUnit * scaling));
     for (let i = 1; i <= n_lines; i++) {
         // Horizontal grid lines
@@ -52,13 +57,13 @@ function renderGraph(theta = 0, scaling = 1) {
 }
 
 // Render Vector
-function renderVector(vector, progress) {
+function renderVector(colour, vector, progress) {
     push();
     translate(side / 2, side / 2);
 
-    stroke("red");
-    strokeWeight(2);
-    fill("red");
+    stroke(colour);
+    strokeWeight(5);
+    fill(colour);
 
     const end_x = vector.origin_x + vector.real_coff * progress;
     const end_y = vector.origin_y + vector.img_coff * progress;
@@ -92,13 +97,13 @@ function renderVector(vector, progress) {
 }
 
 // Translate Vector
-function translateVector(vector, progress, end_vector) {
+function translateVector(colour, vector, progress, end_vector) {
     push();
     translate(side / 2, side / 2);
 
-    stroke("red");
-    strokeWeight(2);
-    fill("red");
+    stroke(colour);
+    strokeWeight(5);
+    fill(colour);
 
     const start_x = vector.origin_x;
     const start_y = vector.origin_y;
@@ -155,12 +160,15 @@ let steps = [
     { op: '+', p: v1, q: v2 },
     // more steps pushed here later
 ];
+let memory = [
+    // { vector: , colour: }
+]
 let stepIndex = 0;
 let progress = 0;
 let animationSpeed = 0.01;
 function draw() {
     background("#E5CBBA");
-    renderGraph(0, 1);
+    renderGraph("green", 3, 0, 1);
 
     if (stepIndex < steps.length) {
         let step = steps[stepIndex];
@@ -171,45 +179,67 @@ function draw() {
         }
 
         renderStep(step, progress);
+        renderMemory(memory);
 
         if (progress >= 1) {
             stepIndex++;
             progress = 0;
         }
     }
+
+    if (stepIndex >= steps.length) {
+        renderMemory(memory);
+    }
 }
+
+function renderMemory(memory) {
+    for (let i = 0; i < memory.length; i++) {
+        current = memory[i]
+        renderVector(current['colour'], current['vector'], 1)
+    }
+}
+function clearFromMemory(step) {
+    memory = memory.filter(entry => entry.vector !== step.p && entry.vector !== step.q);
+}
+
 
 function renderStep(step, e) {
     if (step.op === 'make') {
-        renderVector(step.p.real_vec(), 1)
-        renderVector(step.p.img_vec(), 1)
-        renderVector(step.p, e)
+        clearFromMemory(step)
+        renderVector(compontent_colour, step.p.real_vec(), 1)
+        renderVector(compontent_colour, step.p.img_vec(), 1)
+        renderVector(resultant_colour, step.p, e)
+        if (e >= 1) {
+            memory.push({ colour: resultant_colour, vector: step.p })
+        }
     }
     if (step.op === 'join') {
-        renderVector(step.p, 1)
-        translateVector(step.q, e, step.p)
+        clearFromMemory(step)
+        renderVector(resultant_colour, step.p, 1)
+        translateVector(actionable_colour, step.q, e, step.p)
         if (e >= 1) {
             step.q.origin_x = step.p.end_x();
             step.q.origin_y = step.p.end_y();
         }
+        if (e >= 1) {
+            memory.push({ colour: resultant_colour, vector: step.p })
+        }
     }
     if (step.op === '+') {
-        renderVector(step.p, 1)
-        renderVector(step.q, 1)
-        renderVector(
-            (new makeVector(
-                step.p.real_coff + step.q.real_coff,
-                step.p.img_coff + step.q.img_coff)),
-            e
-        )
+        clearFromMemory(step)
+        renderVector(compontent_colour, step.p, 1)
+        renderVector(compontent_colour, step.q, 1)
+        let sum = new makeVector(step.p.real_coff + step.q.real_coff, step.p.img_coff + step.q.img_coff)
+        renderVector(resultant_colour, sum, e)
+        if (e >= 1) memory.push({ colour: resultant_colour, vector: sum })
     }
     if (step.op === '-') {
+        clearFromMemory(step)
         let scale = 1 - 2 * e;
-
         let flipped = new makeVector(step.p.real_coff * scale, step.p.img_coff * scale);
         flipped.origin_x = step.p.origin_x;
         flipped.origin_y = step.p.origin_y;
-        renderVector(flipped, 1)
+        renderVector(actionable_colour, flipped, 1)
 
         if (e >= 1) {
             step.p.real_coff = -step.p.real_coff;
