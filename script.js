@@ -30,7 +30,7 @@ typeBox.addEventListener("keypress", function (event) {
         loadEquation()
     }
 });
-const valid_operators = ['+', '-', '*']
+const valid_operators = ['+', '-', '*', '/']
 function parseText(text) {
     let arr = text.split('')
 
@@ -123,6 +123,10 @@ function parseText(text) {
     }
     else if (operator === '*') {
         steps.push({ op: '*', p: first.value, q: second.value });
+    }
+    else if (operator === '/') {
+        if (second.value.magnitude === 0) throw new Error("Division by zero");
+        steps.push({ op: '/', p: first.value, q: second.value });
     }
     return steps;
 }
@@ -438,7 +442,36 @@ function renderStep(step, e) {
         }
     }
     if (step.op === '/') {
+        clearFromMemory(step)
+        let divsior_magnitude = step.q.magnitude ** 2
+        let inverse = new makeVector(step.q.real_coff / divsior_magnitude, -step.q.img_coff / divsior_magnitude)
 
+        let instant_argument = inverse.argument * e;
+        let instant_magnitude = 1 + (inverse.magnitude - 1) * e;
+
+        renderGraph(actionable_graph_colour, 2, e, inverse)
+        renderVector(compontent_colour, step.p, 1)
+        renderVector(compontent_colour, step.q, 1)
+
+        let divisor_now = new makeVector(
+            step.q.magnitude * instant_magnitude * Math.cos(step.q.argument + instant_argument),
+            step.q.magnitude * instant_magnitude * Math.sin(step.q.argument + instant_argument)
+        )
+        renderVector(actionable_colour, divisor_now, 1)
+
+        let current = new makeVector(
+            step.p.magnitude * instant_magnitude * Math.cos(step.p.argument + instant_argument),
+            step.p.magnitude * instant_magnitude * Math.sin(step.p.argument + instant_argument)
+        )
+        renderVector(resultant_colour, current, 1)
+
+        if (e >= 1) {
+            let quotient = new makeVector(
+                (step.p.real_coff * step.q.real_coff + step.p.img_coff * step.q.img_coff) / divsior_magnitude,
+                (step.p.img_coff * step.q.real_coff - step.p.real_coff * step.q.img_coff) / divsior_magnitude
+            )
+            memory.push({ colour: resultant_colour, vector: quotient })
+        }
     }
     if (step.op === '^') {
 

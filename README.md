@@ -25,6 +25,7 @@ This project is to help build an intuitive understanding of Complex numbers and 
 - Addition(+): To add 2 complex numbers together
 - Subtraction(-): To subtract 2 complex numbers.
 - Multiplication(*): To scale the cartestian plane to multiply 2 complex numbers together.
+- Division(/): To scale the cartestian plane with respect to a vector to divide 2 complex numbers together.
 
 ### Tech Stack
 
@@ -42,7 +43,7 @@ This project is to help build an intuitive understanding of Complex numbers and 
 
 ### When will this be completed?
 
-By Nov 2nd?
+By Nov 10th?
 
 ## Acknowledgments
 
