@@ -1,6 +1,10 @@
 # Lateral Numbers
 
-This project is to help build an intuitive understanding of Complex numbers and fuctions.
+This project is to help build an intuitive understanding of complex numbers and functions.
+
+I have always seen people get scared of imaginary numbers and dismiss them as a useless piece of maths. I argue the contrary: complex numbers, their proofs and their operations are so elegant that one simply must learn them intuitively. This project is my response to that.
+
+To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminology: lateral numbers.
 
 ## Table of Contents
 
@@ -13,6 +17,7 @@ This project is to help build an intuitive understanding of Complex numbers and 
 
 ## Features
 
+- Step-by-step animated visualizations of complex number operations
 - Cool UI!
 
 ### Test Parser
