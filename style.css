@@ -193,6 +193,7 @@ a:hover {
     width: 90%;
     margin: 3vh auto;
     padding: 0;
+    clip-path: none;
 }
 
 #canvas canvas {

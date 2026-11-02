@@ -7,6 +7,28 @@ function setup() {
     createCanvas(side, side).parent("canvas")
 }
 
+// Paper edges
+function roughEdges(el, spacing = 28, jitter = 3) {
+    const nx = Math.max(4, Math.round(el.offsetWidth / spacing));
+    const ny = Math.max(2, Math.round(el.offsetHeight / spacing));
+    const j = () => (Math.random() * jitter).toFixed(1) + "px";
+    const pct = (v) => (v * 100).toFixed(2) + "%";
+    const points = [];
+
+    for (let i = 0; i < nx; i++) points.push(`${pct(i / nx)} ${j()}`);                          // top
+    for (let i = 0; i < ny; i++) points.push(`calc(100% - ${j()}) ${pct(i / ny)}`);             // right
+    for (let i = 0; i < nx; i++) points.push(`${pct(1 - i / nx)} calc(100% - ${j()})`);         // bottom
+    for (let i = 0; i < ny; i++) points.push(`${j()} ${pct(1 - i / ny)}`);                      // left
+
+    el.style.clipPath = `polygon(${points.join(", ")})`;
+}
+
+window.addEventListener("load", () => {
+    document.querySelectorAll(".content").forEach((el) => {
+        if (el.id !== "canvas") roughEdges(el);
+    });
+});
+
 // Zoom Handler
 let zoom_readout = document.getElementById("zoom_readout")
 function zoom_in() {
