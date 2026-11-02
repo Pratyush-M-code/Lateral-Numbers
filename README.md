@@ -36,7 +36,7 @@ This project is to help build an intuitive understanding of Complex numbers and 
 
 ## Screenshots
 
-![Screenshot](https://via.placeholder.com/800x400?text=Screenshot)
+![Screenshot](assets/Screenshot%202026-11-02%20091335.png)
 
 ## FAQ
 
@@ -49,6 +49,7 @@ By Nov 2nd?
 - My Math teacher for inspiration!
 - [Imaginary Numbers Are Real by Welch Labs](https://www.youtube.com/watch?v=T647CGsuOVU&list=PLiaHhY2iBX9g6KIvZ_703G3KJXapKkNaF)
 - [Complex number fundamentals | Ep. 3 by 3Blue1Brown](https://www.youtube.com/watch?v=5PcpBw5Hbwo)
+- [Draggable Multiplication](https://www.geogebra.org/m/mbhbdvkr)
 - [p5.js](https://p5js.org/tutorials/get-started/)
 - [W3 Schools](https://www.w3schools.com) Also who doesn't use W3 schools?
 

@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <title>Lateral Numbers</title>
+    <meta name="title" content="Lateral Numbers">
+    <meta name="description"
+        content="An interactive complex number visualizer that helps you understand complex numbers through animated vectors and geometric transformations.">
+    <meta name="author" content="Pratyush Mohanty">
+    <link rel="icon" type="image/png" href="assets/Lateral Numbers Favicon.png">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.min.js" defer></script>
     <script src="script.js" defer></script>
@@ -76,9 +81,23 @@
         <div class="content" id="canvas">
             <!-- Canvas goes here -->
         </div>
+        <div class="content" id="zoom">
+            <h3>Zoom Controls</h3>
+            <div id="zoom_controls">
+                <button onclick="zoom_in()" id="zoom_in">Zoom In</button>
+                <p>Zoom : <output id="zoom_readout">0.5</output></p>
+                <button onclick="zoom_out()" id="zoom_out">Zoom Out</button>
+            </div>
+        </div>
         <div class="content" id="reference">
             <h2>Want to learn more?</h2>
             <p>Here are some of the sources I used to build this project and it's intuition.</p>
+            <p> - <a href="https://www.youtube.com/watch?v=T647CGsuOVU&list=PLiaHhY2iBX9g6KIvZ_703G3KJXapKkNaF">Imaginary
+                    Numbers Are Real by Welch Labs</a><br>
+                - <a href="https://www.youtube.com/watch?v=5PcpBw5Hbwo">Complex number fundamentals | Ep. 3 by
+                    3Blue1Brown</a><br>
+                - <a href="https://www.geogebra.org/m/mbhbdvkr">Draggable Multiplication</a>
+            </p>
         </div>
     </main>
 

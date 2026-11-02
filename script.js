@@ -7,6 +7,21 @@ function setup() {
     createCanvas(side, side).parent("canvas")
 }
 
+// Zoom Handler
+let zoom_readout = document.getElementById("zoom_readout")
+function zoom_in() {
+    zoom = zoom * 2
+    unit = (side / 10) * zoom
+    zoom_readout.textContent = zoom
+    loadEquation()
+}
+function zoom_out() {
+    zoom = zoom / 2
+    unit = (side / 10) * zoom
+    zoom_readout.textContent = zoom
+    loadEquation()
+}
+
 // Text Parser
 let typeBox = document.getElementById("equation")
 let text = typeBox.value
@@ -200,9 +215,10 @@ function renderVector(colour, vector, progress) {
     if (distance > 0) {
         const cos_theta = dx / distance;
         const sine_theta = dy / distance;
-        const arrow_x = end_x - dx / 11;
-        const arrow_y = end_y - dy / 11;
-        const r = distance / 25;
+        const head = Math.min(0.3, distance / 2)
+        const arrow_x = end_x - (dx / distance) * head
+        const arrow_y = end_y - (dy / distance) * head
+        const r = head / 2.5
 
         const arrow_x1 = arrow_x - r * sine_theta;
         const arrow_x2 = arrow_x + r * sine_theta;
