@@ -100,13 +100,13 @@ function backAddition() { additionSim.backStep() }
 let zoom_readout = document.getElementById("zoom_readout")
 function zoom_in() {
     zoom = zoom * 2
-    unit = (width / 10) * zoom
+    updateUnit()
     zoom_readout.textContent = zoom
     loadEquation()
 }
 function zoom_out() {
     zoom = zoom / 2
-    unit = (width / 10) * zoom
+    updateUnit()
     zoom_readout.textContent = zoom
     loadEquation()
 }
