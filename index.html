@@ -44,6 +44,42 @@
             <h2>What is this project about?</h2>
             <p>This project is to help build an intuitive understanding of Complex numbers and fuctions.</p>
         </div>
+        <div class="content" id="complex_numbers">
+            <div class="text">
+                <h2>What are Complex Numbers?</h2>
+                <p>Complex numbers are numbers that have a real and imaginary component. They can be represented in the
+                    form
+                    of (a + bi) where a is the real component and b is the imaginary component.</p>
+                <p>Complex numbers can be represented on a cartesian plane with the x-axis representing the real
+                    component and the y-axis representing the imaginary component.</p>
+            </div>
+        </div>
+        <div class="content" id="addition-section">
+            <div class="text">
+                <h2>What is complex addition?</h2>
+                <p></p>
+            </div>
+            <div class="canvas explainer" id="addition-canvas">
+                <!-- Content here -->
+            </div>
+            <div class="controls">
+                <button onclick="backAddition()">Previous</button>
+                <button onclick="resetAddition()">Replay</button>
+                <button onclick="nextAddition()">Next</button>
+            </div>
+        </div>
+        <div class="content" id="subtraction">
+            <h2>What is complex subtraction?</h2>
+        </div>
+        <div class="content" id="euler-form">
+            <h2>What is Euler's form?</h2>
+        </div>
+        <div class="content" id="multiplication">
+            <h2>What is complex multiplication?</h2>
+        </div>
+        <div class="content" id="division">
+            <h2>What is complex division?</h2>
+        </div>
         <div class="content" id="explanation">
             <h2>How should I use this?</h2>
             <p>Currently this project is a work in progress</p>
@@ -90,7 +126,7 @@
         </div>
         <div class="content" id="zoom">
             <h3>Zoom Controls</h3>
-            <div id="zoom_controls">
+            <div class="controls">
                 <button onclick="zoom_in()" id="zoom_in">Zoom In</button>
                 <p>Zoom : <output id="zoom_readout">0.5</output></p>
                 <button onclick="zoom_out()" id="zoom_out">Zoom Out</button>

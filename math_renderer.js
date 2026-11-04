@@ -25,8 +25,8 @@ function makeVector(a = 0, b = 0) {
 //To render grid
 function renderGraph(p, colour = graph_colour, weight = "3", progress = null, unit_vector = null) {
     p.push()
-    p.translate(side / 2, side / 2)
-    let origin = side / 2 * Math.SQRT2
+    p.translate(p.width / 2, p.height / 2);
+    let origin = Math.hypot(p.width, p.height) / 2
 
     if (progress === null) {
         p.stroke(colour)
@@ -35,7 +35,7 @@ function renderGraph(p, colour = graph_colour, weight = "3", progress = null, un
         p.line(0, -origin, 0, origin) //y axis
 
         p.strokeWeight(Math.ceil(weight / 3))
-        let n_lines = Math.ceil((side * Math.SQRT2) / (unit));
+        let n_lines = Math.ceil((p.width * Math.SQRT2) / (unit));
         for (let i = 1; i <= n_lines; i++) {
             // Horizontal grid lines
             p.line(-origin, i * unit, origin, i * unit);
@@ -54,7 +54,7 @@ function renderGraph(p, colour = graph_colour, weight = "3", progress = null, un
         p.line(0, -origin, 0, origin) //y axis
 
         p.strokeWeight(Math.ceil(weight / 3))
-        let n_lines = Math.ceil((side * Math.SQRT2) / (scaledUnit));
+        let n_lines = Math.ceil((p.width * Math.SQRT2) / (scaledUnit));
         for (let i = 1; i <= n_lines; i++) {
             // Horizontal grid lines
             p.line(-origin, i * scaledUnit, origin, i * scaledUnit);
@@ -71,7 +71,7 @@ function renderGraph(p, colour = graph_colour, weight = "3", progress = null, un
 // Render Vector
 function renderVector(p, colour, vector, progress) {
     p.push();
-    p.translate(side / 2, side / 2);
+    p.translate(p.width / 2, p.height / 2);
 
     p.stroke(colour);
     p.strokeWeight(5);
@@ -112,7 +112,7 @@ function renderVector(p, colour, vector, progress) {
 // Translate Vector
 function translateVector(p, colour, vector, progress, end_vector) {
     p.push();
-    p.translate(side / 2, side / 2);
+    p.translate(p.width / 2, p.height / 2);
 
     p.stroke(colour);
     p.strokeWeight(5);
@@ -163,17 +163,19 @@ function translateVector(p, colour, vector, progress, end_vector) {
 
 function renderMemory(p, memory) {
     for (let i = 0; i < memory.length; i++) {
-        current = memory[i]
+        let current = memory[i]
         renderVector(p, current['colour'], current['vector'], 1)
     }
 }
-function clearFromMemory(step) {
-    memory = memory.filter(entry => entry.vector !== step.p && entry.vector !== step.q);
+function clearFromMemory(step, memory) {
+    for (let i = memory.length - 1; i >= 0; i--) {
+        if (memory[i].vector === step.p || memory[i].vector === step.q) memory.splice(i, 1);
+    }
 }
 
 
-function renderStep(p, step, e) {
-    clearFromMemory(step)
+function renderStep(p, step, e, memory) {
+    clearFromMemory(step, memory)
 
     if (step.op === 'make') {
 
@@ -302,27 +304,11 @@ function renderStep(p, step, e) {
 }
 
 function loadEquation() {
-
-    let typeBox = document.getElementById("equation");
-    let text = typeBox.value;
-
+    let text = document.getElementById("equation").value;
     try {
-        steps = parseText(text);
-        // Reset animation
-        stepIndex = 0;
-        progress = 0;
-        memory = [];
-        console.log(steps);
-
-    }
-    catch (error) {
-        steps = [];
-        stepIndex = 0;
-        progress = 0;
-        memory = [];
+        sandboxSim.load(parseText(text));
+    } catch (error) {
+        sandboxSim.load([]);
         console.error(error.message);
     }
-}
-let memory = [
-    // { vector: , colour: }
-]
+}   

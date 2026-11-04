@@ -1,8 +1,12 @@
 // init
 let el = document.getElementById("canvas")
-side = el.clientWidth
 let zoom = 0.5
-let unit = (side / 10) * zoom
+let unit = (el.clientWidth / 10) * zoom
+function updateUnit() { unit = (el.clientWidth / 10) * zoom }
+function fit(p, id) {
+    const box = document.getElementById(id)
+    p.resizeCanvas(box.clientWidth, box.clientHeight)
+}
 
 // Paper edges
 function roughEdges(el, spacing = 28, jitter = 3) {
@@ -26,17 +30,83 @@ window.addEventListener("load", () => {
     });
 });
 
+// Addition
+function addition(p) {
+    let motion, memory, motionIndex, progress
+    let animationSpeed = 0.01;
+
+    function reset() {
+        const v1 = new makeVector(3, 2)
+        const v2 = new makeVector(-1, -4)
+        motion = [
+            { op: 'make', p: v1, q: 0 },
+            { op: 'make', p: v2, q: 0 },
+            { op: 'join', p: v1, q: v2 },
+            { op: '+', p: v1, q: v2 }
+        ];
+        memory = []
+        motionIndex = 0
+        progress = 0
+    }
+    reset()
+    p.reset = reset
+
+    function nextStep() {
+        if (motionIndex >= motion.length) return;
+        renderStep(p, motion[motionIndex], 1, memory);
+        motionIndex++;
+        progress = 0;
+    }
+    p.nextStep = nextStep
+
+    function backStep() {
+        if (motionIndex <= 0) return;
+        motionIndex--;
+        progress = 0;
+    }
+    p.backStep = backStep
+
+    p.setup = function () {
+        const box = document.getElementById("addition-canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { fit(p, "addition-canvas") }
+    p.draw = function () {
+        p.background("#E5CBBA");
+        renderGraph(p, graph_colour, 3)
+
+        if (motionIndex < motion.length) {
+            let step = motion[motionIndex];
+
+            progress += animationSpeed;
+            if (progress >= 1) {
+                progress = 1;
+            }
+
+            renderStep(p, step, progress, memory);
+            renderMemory(p, memory);
+        }
+        if (motionIndex >= motion.length) {
+            renderMemory(p, memory);
+        }
+    }
+}
+let additionSim = new p5(addition)
+function resetAddition() { additionSim.reset() }
+function nextAddition() { additionSim.nextStep() }
+function backAddition() { additionSim.backStep() }
+
 // Zoom Handler
 let zoom_readout = document.getElementById("zoom_readout")
 function zoom_in() {
     zoom = zoom * 2
-    unit = (side / 10) * zoom
+    unit = (width / 10) * zoom
     zoom_readout.textContent = zoom
     loadEquation()
 }
 function zoom_out() {
     zoom = zoom / 2
-    unit = (side / 10) * zoom
+    unit = (width / 10) * zoom
     zoom_readout.textContent = zoom
     loadEquation()
 }
@@ -51,6 +121,7 @@ typeBox.addEventListener("keypress", function (event) {
 });
 const valid_operators = ['+', '-', '*', '/']
 function parseText(text) {
+    let steps = [];
     let arr = text.split('')
 
     //remove spaces
@@ -151,39 +222,39 @@ function parseText(text) {
 }
 
 //animate
-let steps = [];
-let stepIndex = 0;
-let progress = 0;
 function sandbox(p) {
+    let steps = [];
+    let stepIndex = 0;
+    let progress = 0;
+    let memory = [
+        // { vector: , colour: }
+    ]
     let animationSpeed = 0.01;
-    p.setup = function () {
-        p.createCanvas(side, side).parent("canvas")
+
+    p.load = function (newSteps) {
+        steps = newSteps; stepIndex = 0; progress = 0; memory = [];
     }
+    p.setup = function () {
+        const box = document.getElementById("canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { updateUnit(); fit(p, "canvas") }
     p.draw = function () {
         p.background("#E5CBBA");
         renderGraph(p, graph_colour, 3)
 
         if (stepIndex < steps.length) {
             let step = steps[stepIndex];
+            progress = Math.min(1, progress + animationSpeed);
 
-            progress += animationSpeed;
-            if (progress >= 1) {
-                progress = 1;
-            }
-
-            renderStep(p, step, progress);
+            renderStep(p, step, progress, memory)
             renderMemory(p, memory);
 
-            if (progress >= 1) {
-                stepIndex++;
-                progress = 0;
-            }
-        }
-
-        if (stepIndex >= steps.length) {
+            if (progress >= 1) { stepIndex++; progress = 0; }
+        } else {
             renderMemory(p, memory);
         }
     }
 }
 
-new p5(sandbox)
+let sandboxSim = new p5(sandbox)

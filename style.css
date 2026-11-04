@@ -183,7 +183,7 @@ a:hover {
     padding: 0.05vh 2vw 0.05vh 2vw;
 }
 
-#zoom_controls {
+.controls {
     display: flex;
     flex-direction: row;
 }
@@ -191,14 +191,31 @@ a:hover {
 #canvas {
     display: block;
     width: 90%;
+    height: 100vh;
     margin: 3vh auto;
     padding: 0;
     clip-path: none;
 }
 
-#canvas canvas {
+.explainer {
+    width: 90%;
+    height: 75vh;
+    margin: 3vh auto;
+    padding: 0;
+}
+
+#canvas canvas,
+.explainer canvas {
     display: block;
-    margin: 0 auto;
+}
+
+.explainer canvas {
+    display: block;
+    width: 90%;
+    aspect-ratio: 1 / 2;
+    margin: 3vh auto;
+    padding: 0;
+    clip-path: none;
 }
 
 .site-footer {
