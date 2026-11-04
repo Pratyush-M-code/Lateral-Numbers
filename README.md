@@ -22,19 +22,38 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 
 ### Test Parser
 
-- readNumber: Takes array and extracts numbers
-- textToVector: Pretty much whats in the name
+- `readNumber:` Takes array and extracts numbers
+- `textToVector:` Pretty much whats in the name
 
 ### Operations
 
-- Addition(+): To add 2 complex numbers together
-- Subtraction(-): To subtract 2 complex numbers.
-- Multiplication(*): To scale the cartestian plane to multiply 2 complex numbers together.
-- Division(/): To scale the cartestian plane with respect to a vector to divide 2 complex numbers together.
+- `Addition(+):` To add 2 complex numbers together
+- `Subtraction(-):` To subtract 2 complex numbers.
+- `Multiplication(*):` To scale the cartestian plane to multiply 2 complex numbers together.
+- `Division(/):` To scale the cartestian plane with respect to a vector to divide 2 complex numbers together.
 
 ### Tech Stack
 
 - **JavaScript**
+
+#### math_renderer.js
+
+- `makeVector(a = 0, b = 0)`
+  - `a` → real coeff.
+  - `b` → img coeff.
+
+- `renderGraph(p, colour = graph_colour, weight = "3", progress = null, unit_vector = null)`
+  - `progress` → for animating.
+  - `unit_vector` → the basis vectors of the graph axis.
+
+- `renderVector(p, colour, vector, progress)`
+  - `vector` → vector to be animated.
+  - `progress` → for animating.
+
+- `translateVector(p, colour, vector, progress, end_vector)`
+  - `vector` → vector to be translated.
+  - `progress` → for animating.
+  - `end_vector` → defines the end point of the vector.
 
 ## Usage
 
