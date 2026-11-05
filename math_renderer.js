@@ -229,6 +229,7 @@ function renderStep(p, step, e, memory) {
         if (e >= 1) {
             step.p.real_coff = -step.p.real_coff;
             step.p.img_coff = -step.p.img_coff;
+            memory.push({ colour: actionable_colour, vector: step.p })
         }
     }
     if (step.op === '*') {
