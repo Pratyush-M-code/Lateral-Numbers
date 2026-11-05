@@ -29,10 +29,23 @@ function renderGraph(p, colour = graph_colour, weight = "3", progress = null, un
     let origin = Math.hypot(p.width, p.height) / 2
 
     if (progress === null) {
+        const hw = p.width / 2
+        const hh = p.height / 2
+        p.noStroke()
+        p.fill(colour)
+        p.textSize(16)
+        p.textAlign(p.CENTER, p.CENTER)
+        p.text("0", 12, 12)
+        p.text("x", hw - 12, 14)
+        p.text("-x", -hw + 16, 14)
+        p.text("i", 14, -hh + 12)
+        p.text("-i", 14, hh - 12)
+
         p.stroke(colour)
         p.strokeWeight(weight)
         p.line(-origin, 0, origin, 0) //x axis
         p.line(0, -origin, 0, origin) //y axis
+
 
         p.strokeWeight(Math.ceil(weight / 3))
         let n_lines = Math.ceil((p.width * Math.SQRT2) / (unit));
