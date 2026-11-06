@@ -171,6 +171,144 @@ function resetSubtraction() { subtractionSim.reset() }
 function nextSubtraction() { subtractionSim.nextStep() }
 function backSubtraction() { subtractionSim.backStep() }
 
+//Multiplication
+function multiplication(p) {
+    let motion, memory, motionIndex, progress
+    let animationSpeed = 0.01;
+
+    function reset() {
+        const v1 = new makeVector(2, -2)
+        const v2 = new makeVector(1, 3)
+        motion = [
+            { op: 'make', p: v1, q: 0 },
+            { op: 'make', p: v2, q: 0 },
+            { op: '*', p: v1, q: v2 }
+        ];
+        memory = []
+        motionIndex = 0
+        progress = 0
+    }
+    reset()
+    p.reset = reset
+
+    function nextStep() {
+        if (motionIndex >= motion.length) return;
+        renderStep(p, motion[motionIndex], 1, memory);
+        motionIndex++;
+        progress = 0;
+    }
+    p.nextStep = nextStep
+
+    function backStep() {
+        if (motionIndex <= 0) return;
+        motionIndex--;
+        progress = 0;
+    }
+    p.backStep = backStep
+
+    p.setup = function () {
+        const box = document.getElementById("multiplication-canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { fit(p, "multiplication -canvas") }
+    p.draw = function () {
+        p.background("#E5CBBA");
+        renderGraph(p, graph_colour, 3)
+
+        if (motionIndex < motion.length) {
+            let step = motion[motionIndex];
+
+            progress += animationSpeed;
+            if (progress >= 1) {
+                progress = 1;
+            }
+
+            renderStep(p, step, progress, memory);
+            renderMemory(p, memory);
+
+            if (progress >= 1) {
+                motionIndex++; progress = 0;
+            }
+        }
+        if (motionIndex >= motion.length) {
+            renderMemory(p, memory);
+        }
+    }
+}
+let multiplicationSim = new p5(multiplication)
+function resetMultiplication() { multiplicationSim.reset() }
+function nextMultiplication() { multiplicationSim.nextStep() }
+function backMultiplication() { multiplicationSim.backStep() }
+
+//Division
+function division(p) {
+    let motion, memory, motionIndex, progress
+    let animationSpeed = 0.01;
+
+    function reset() {
+        const v1 = new makeVector(2, -2)
+        const v2 = new makeVector(1, 3)
+        motion = [
+            { op: 'make', p: v1, q: 0 },
+            { op: 'make', p: v2, q: 0 },
+            { op: '*', p: v1, q: v2 }
+        ];
+        memory = []
+        motionIndex = 0
+        progress = 0
+    }
+    reset()
+    p.reset = reset
+
+    function nextStep() {
+        if (motionIndex >= motion.length) return;
+        renderStep(p, motion[motionIndex], 1, memory);
+        motionIndex++;
+        progress = 0;
+    }
+    p.nextStep = nextStep
+
+    function backStep() {
+        if (motionIndex <= 0) return;
+        motionIndex--;
+        progress = 0;
+    }
+    p.backStep = backStep
+
+    p.setup = function () {
+        const box = document.getElementById("division-canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { fit(p, "division -canvas") }
+    p.draw = function () {
+        p.background("#E5CBBA");
+        renderGraph(p, graph_colour, 3)
+
+        if (motionIndex < motion.length) {
+            let step = motion[motionIndex];
+
+            progress += animationSpeed;
+            if (progress >= 1) {
+                progress = 1;
+            }
+
+            renderStep(p, step, progress, memory);
+            renderMemory(p, memory);
+
+            if (progress >= 1) {
+                motionIndex++; progress = 0;
+            }
+        }
+        if (motionIndex >= motion.length) {
+            renderMemory(p, memory);
+        }
+    }
+}
+let divisionSim = new p5(division)
+function resetDivision() { divisionSim.reset() }
+function nextDivision() { divisionSim.nextStep() }
+function backDivision() { divisionSim.backStep() }
+
 // Zoom Handler
 let zoom_readout = document.getElementById("zoom_readout")
 function zoom_in() {
