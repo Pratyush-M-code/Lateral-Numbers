@@ -31,13 +31,27 @@ window.addEventListener("load", () => {
 });
 
 // Addition
+document.getElementById("a-addition").value = 3
+document.getElementById("b-addition").value = 2
+document.getElementById("c-addition").value = -1
+document.getElementById("d-addition").value = -3
+
 function addition(p) {
     let motion, memory, motionIndex, progress
     let animationSpeed = 0.01;
 
     function reset() {
-        const v1 = new makeVector(3, 2)
-        const v2 = new makeVector(-1, -4)
+
+        const a_addition = Number(document.getElementById("a-addition").value) || 0;
+        const b_addition = Number(document.getElementById("b-addition").value) || 0;
+        const c_addition = Number(document.getElementById("c-addition").value) || 0;
+        const d_addition = Number(document.getElementById("d-addition").value) || 0;
+
+        const v1 = new makeVector(a_addition, b_addition)
+        const v2 = new makeVector(c_addition, d_addition)
+
+        document.getElementById("additon-readout").value = `${a_addition + c_addition} + ${b_addition + d_addition}i`
+
         motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'make', p: v2, q: 0 },
@@ -61,8 +75,11 @@ function addition(p) {
 
     function backStep() {
         if (motionIndex <= 0) return;
+
         motionIndex--;
         progress = 0;
+
+        rebuildMemory(p, motion, motionIndex, memory);
     }
     p.backStep = backStep
 
@@ -129,11 +146,13 @@ function subtraction(p) {
         progress = 0;
     }
     p.nextStep = nextStep
-
     function backStep() {
         if (motionIndex <= 0) return;
+
         motionIndex--;
         progress = 0;
+
+        rebuildMemory(p, motion, motionIndex, memory);
     }
     p.backStep = backStep
 
@@ -201,8 +220,11 @@ function eulerForm(p) {
 
     function backStep() {
         if (motionIndex <= 0) return;
+
         motionIndex--;
         progress = 0;
+
+        rebuildMemory(p, motion, motionIndex, memory);
     }
     p.backStep = backStep
 
@@ -270,8 +292,11 @@ function multiplication(p) {
 
     function backStep() {
         if (motionIndex <= 0) return;
+
         motionIndex--;
         progress = 0;
+
+        rebuildMemory(p, motion, motionIndex, memory);
     }
     p.backStep = backStep
 
@@ -339,8 +364,11 @@ function division(p) {
 
     function backStep() {
         if (motionIndex <= 0) return;
+
         motionIndex--;
         progress = 0;
+
+        rebuildMemory(p, motion, motionIndex, memory);
     }
     p.backStep = backStep
 

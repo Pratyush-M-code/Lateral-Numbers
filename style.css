@@ -110,13 +110,42 @@ p {
 
 input {
     color: var(--text);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-family: var(--font-body);
     line-height: 1.2;
     font-weight: 400;
     font-style: normal;
     font-optical-sizing: auto;
 }
+
+.integer {
+    color: var(--text);
+    font-size: 1.25rem;
+    font-family: var(--font-body);
+    line-height: 1.2;
+    font-weight: 400;
+    font-style: normal;
+    font-optical-sizing: auto;
+    width: 10vw;
+}
+
+.feild {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    padding: 1vw 0 0 0;
+}
+
+.field-note {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: var(--text);
+    opacity: 0.6;
+    text-align: center;
+    margin-top: 4px;
+}
+
 
 #title {
     width: 50%;

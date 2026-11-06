@@ -57,7 +57,38 @@
         <div class="content" id="addition-section">
             <div class="text">
                 <h2>What is complex addition?</h2>
-                <p></p>
+                <p>Complex addition is simply the addition of the real and imaginary coefficients of the 2 complex
+                    numbers independently.<br>
+                    For example:- (a + bi) + (c + di)<br>
+                    = (a + c) + (b + d)i<br>
+                </p>
+                <h3>Visualize!</h3>
+                <p>In the graph, vector 1 is first made from its components, then vector 2 is made from its components.
+                    Vector 2 is then joined to the tip of vector 1, and the real and imaginary components are added
+                    independently to form the resultant!</p>
+                <h3>Try it out!</h3>
+                <p>
+                    ( <span class="feild">
+                        <input class="integer" id="a-addition" type="text" inputmode="numeric">
+                        <label for="a-addition" class="field-note">Real part (a)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="b-addition" type="text" inputmode="numeric">
+                        <label for="b-addition" class="field-note">Imaginary part (b)</label>
+                    </span>) +
+                    (<span class="feild">
+                        <input class="integer" id="c-addition" type="text" inputmode="numeric">
+                        <label for="c-addition" class="field-note">Real part (c)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="d-addition" type="text" inputmode="numeric">
+                        <label for="d-addition" class="field-note">Imaginary part (d)</label>
+                    </span>i) =
+                    <span class="feild">
+                        <output id="additon-readout"></output>
+                        <label for="additon-readout" class="field-note">Resultant</label>
+                    </span>
+                </p>
             </div>
             <div class="canvas explainer" id="addition-canvas">
                 <!-- Content here -->

@@ -11,6 +11,10 @@ function makeVector(a = 0, b = 0, label = "") {
     this.img_coff = b;
     this.magnitude = Math.pow(Math.pow(a, 2) + Math.pow(b, 2), 0.5)
     this.argument = Math.atan2(b, a)
+    this.update = function () {
+        this.magnitude = Math.pow(Math.pow(this.real_coff, 2) + Math.pow(this.img_coff, 2), 0.5)
+        this.argument = Math.atan2(this.img_coff, this.real_coff)
+    }
     this.origin_x = 0
     this.origin_y = 0
     this.end_x = function () { return this.origin_x + this.real_coff }
@@ -272,6 +276,7 @@ function renderStep(p, step, e, memory) {
             memory.push({ colour: resultant_colour, vector: step.p })
         }
     }
+
     if (step.op === 'rotate') {
 
         // roatated vector
@@ -397,6 +402,30 @@ function renderStep(p, step, e, memory) {
         if (e >= 1) {
             memory.push({ colour: compontent_colour, vector: step.p })
         }
+    }
+}
+function rebuildMemory(p, motion, motionIndex, memory) {
+    const vectors = new Set();
+
+    for (const step of motion) {
+        if (step.p && typeof step.p === "object") {
+            vectors.add(step.p);
+        }
+
+        if (step.q && typeof step.q === "object") {
+            vectors.add(step.q);
+        }
+    }
+
+    for (const vector of vectors) {
+        vector.origin_x = 0;
+        vector.origin_y = 0;
+    }
+
+    memory.length = 0;
+
+    for (let i = 0; i < motionIndex; i++) {
+        renderStep(p, motion[i], 1, memory);
     }
 }
 
