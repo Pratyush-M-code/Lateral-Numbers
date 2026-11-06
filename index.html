@@ -65,7 +65,8 @@
                 <h3>Visualize!</h3>
                 <p>In the graph, vector 1 is first made from its components, then vector 2 is made from its components.
                     Vector 2 is then joined to the tip of vector 1, and the real and imaginary components are added
-                    independently to form the resultant!</p>
+                    independently to form the resultant!<br>
+                    Click the Replay button to see your equation rendered.</p>
                 <h3>Try it out!</h3>
                 <p>
                     ( <span class="feild">
@@ -102,7 +103,42 @@
         <div class="content" id="subtraction">
             <div class="text">
                 <h2>What is complex subtraction?</h2>
-                <p></p>
+                <p>Complex subtraction is simply the subtraction of the real and imaginary coefficients of the 2 complex
+                    numbers independently.<br>
+                    For example:- (a + bi) - (c + di)<br>
+                    = (a - c) + (b - d)i<br>
+                </p>
+                <h3>Visualize!</h3>
+                <p>In the graph, vector 1 is first made from its components, then vector 2 is made from its components.
+                    Vector 2 is then joined to the tip of vector 1 and flipped to point the opposite way, which is the
+                    same as
+                    multiplying it by -1. Finally, the flipped vector is added to vector 1 to form the resultant,
+                    because
+                    subtracting a number is the same as adding its negative!<br>
+                    Click the Replay button to see your equation rendered.</p>
+                <h3>Try it out!</h3>
+                <p>
+                    ( <span class="feild">
+                        <input class="integer" id="a-subtraction" type="text" inputmode="numeric">
+                        <label for="a-subtraction" class="field-note">Real part (a)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="b-subtraction" type="text" inputmode="numeric">
+                        <label for="b-subtraction" class="field-note">Imaginary part (b)</label>
+                    </span>) -
+                    (<span class="feild">
+                        <input class="integer" id="c-subtraction" type="text" inputmode="numeric">
+                        <label for="c-subtraction" class="field-note">Real part (c)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="d-subtraction" type="text" inputmode="numeric">
+                        <label for="d-subtraction" class="field-note">Imaginary part (d)</label>
+                    </span>i) =
+                    <span class="feild">
+                        <output id="subtraction-readout"></output>
+                        <label for="subtraction-readout" class="field-note">Resultant</label>
+                    </span>
+                </p>
             </div>
             <div class="canvas explainer" id="subtraction-canvas">
                 <!-- Content here -->
@@ -113,17 +149,43 @@
                 <button onclick="nextSubtraction()">Next</button>
             </div>
         </div>
+
         <div class="content" id="euler-form">
-            <h2>What is Euler's form?</h2>
-            <div class="canvas explainer" id="euler-form-canvas">
-                <!-- Content here -->
+            <div class="text">
+                <h2>What is Euler's form?</h2>
+                <p>Any complex number can be written using its length and its angle.<br>
+                    For example:- a + bi = r·e<sup>iθ</sup><br>
+                    where r = √(a² + b²) and θ = atan2(b, a)<br>
+                </p>
+                <h3>Visualize!</h3>
+                <p>In the graph, the vector a + bi is first made from its components. A circle is then drawn through its
+                    tip,
+                    and its radius is r. Finally, the angle θ is measured from the real axis up to the vector.
+                    Together, r and θ give the number in Euler's form!</p>
+                <h3>Try it out!</h3>
+                <p>
+                    (<span class="feild">
+                        <input class="integer" id="a-euler" type="text" inputmode="decimal">
+                        <label for="a-euler" class="field-note">Real part (a)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="b-euler" type="text" inputmode="decimal">
+                        <label for="b-euler" class="field-note">Imaginary part (b)</label>
+                    </span>i) =
+                    <span class="feild">
+                        <output id="euler-readout"></output>
+                        <label for="euler-readout" class="field-note">Euler's form</label>
+                    </span>
+                </p>
             </div>
+            <div class="canvas explainer" id="euler-canvas"></div>
             <div class="controls">
-                <button onclick="backEulerForm()">Previous</button>
-                <button onclick="resetEulerForm()">Replay</button>
-                <button onclick="nextEulerForm()">Next</button>
+                <button onclick="backEuler()">Previous</button>
+                <button onclick="resetEuler()">Replay</button>
+                <button onclick="nextEuler()">Next</button>
             </div>
         </div>
+
         <div class="content" id="multiplication">
             <h2>What is complex multiplication?</h2>
             <div class="canvas explainer" id="multiplication-canvas">

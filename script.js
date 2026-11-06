@@ -31,10 +31,10 @@ window.addEventListener("load", () => {
 });
 
 // Addition
-document.getElementById("a-addition").value = 3
+document.getElementById("a-addition").value = 4
 document.getElementById("b-addition").value = 2
-document.getElementById("c-addition").value = -1
-document.getElementById("d-addition").value = -3
+document.getElementById("c-addition").value = -6
+document.getElementById("d-addition").value = -1
 
 function addition(p) {
     let motion, memory, motionIndex, progress
@@ -47,16 +47,28 @@ function addition(p) {
         const c_addition = Number(document.getElementById("c-addition").value) || 0;
         const d_addition = Number(document.getElementById("d-addition").value) || 0;
 
-        const v1 = new makeVector(a_addition, b_addition)
-        const v2 = new makeVector(c_addition, d_addition)
+        const v1 = new makeVector(a_addition, b_addition, "Vector 1")
+        const v1_real = new makeVector(a_addition, 0, "Real Coff. 1")
+        const v1_img = new makeVector(0, b_addition, "Img Coff. 1")
+        const v2 = new makeVector(c_addition, d_addition, "Vector 2")
+        const v2_real = new makeVector(c_addition, 0, "Real Coff. 2")
+        const v2_img = new makeVector(0, d_addition, "Img Coff. 2")
 
         document.getElementById("additon-readout").value = `${a_addition + c_addition} + ${b_addition + d_addition}i`
 
         motion = [
+            { op: 'render', p: v1_real, q: 0 },
+            { op: 'render', p: v1_img, q: 0 },
             { op: 'make', p: v1, q: 0 },
+            { op: 'render', p: v2_real, q: 0 },
+            { op: 'render', p: v2_img, q: 0 },
             { op: 'make', p: v2, q: 0 },
+            { op: 'join', p: v1_real, q: v2_real },
+            { op: '+', p: v1_real, q: v2_real, label: "Real Coff Resultant" },
+            { op: 'join', p: v1_img, q: v2_img },
+            { op: '+', p: v1_img, q: v2_img, label: "Img Coff. Resultant" },
             { op: 'join', p: v1, q: v2 },
-            { op: '+', p: v1, q: v2 }
+            { op: '+', p: v1, q: v2, label: "Resultant" },
         ];
         memory = []
         motionIndex = 0
@@ -118,19 +130,47 @@ function nextAddition() { additionSim.nextStep() }
 function backAddition() { additionSim.backStep() }
 
 //Subtraction
+document.getElementById("a-subtraction").value = 3
+document.getElementById("b-subtraction").value = 2
+document.getElementById("c-subtraction").value = -2
+document.getElementById("d-subtraction").value = 1
 function subtraction(p) {
     let motion, memory, motionIndex, progress
     let animationSpeed = 0.01;
 
     function reset() {
-        const v1 = new makeVector(3, -1)
-        const v2 = new makeVector(-5, -2)
+
+        const a_subtraction = Number(document.getElementById("a-subtraction").value) || 0;
+        const b_subtraction = Number(document.getElementById("b-subtraction").value) || 0;
+        const c_subtraction = Number(document.getElementById("c-subtraction").value) || 0;
+        const d_subtraction = Number(document.getElementById("d-subtraction").value) || 0;
+
+        const v1 = new makeVector(a_subtraction, b_subtraction, "Vector 1")
+        const v1_real = new makeVector(a_subtraction, 0, "Real Coff. 1")
+        const v1_img = new makeVector(0, b_subtraction, "Img Coff. 1")
+        const v2 = new makeVector(c_subtraction, d_subtraction, "Vector 2")
+        const v2_real = new makeVector(c_subtraction, 0, "Real Coff. 2")
+        const v2_img = new makeVector(0, d_subtraction, "Img Coff. 2")
+
+
+        document.getElementById("subtraction-readout").value = `${a_subtraction - c_subtraction} + ${b_subtraction - d_subtraction}i`
+
         motion = [
+            { op: 'render', p: v1_real, q: 0 },
+            { op: 'render', p: v1_img, q: 0 },
             { op: 'make', p: v1, q: 0 },
+            { op: 'render', p: v2_real, q: 0 },
+            { op: 'render', p: v2_img, q: 0 },
             { op: 'make', p: v2, q: 0 },
+            { op: 'join', p: v1_real, q: v2_real },
+            { op: '-', p: v2_real, q: 0 },
+            { op: '+', p: v1_real, q: v2_real, label: "Real Coff Resultant" },
+            { op: 'join', p: v1_img, q: v2_img },
+            { op: '-', p: v2_img, q: 0 },
+            { op: '+', p: v1_img, q: v2_img, label: "Img Coff. Resultant" },
             { op: 'join', p: v1, q: v2 },
             { op: '-', p: v2, q: 0 },
-            { op: '+', p: v1, q: v2 }
+            { op: '+', p: v1, q: v2, label: "Resultant" },
         ];
         memory = []
         motionIndex = 0
@@ -146,6 +186,7 @@ function subtraction(p) {
         progress = 0;
     }
     p.nextStep = nextStep
+
     function backStep() {
         if (motionIndex <= 0) return;
 
@@ -191,18 +232,27 @@ function nextSubtraction() { subtractionSim.nextStep() }
 function backSubtraction() { subtractionSim.backStep() }
 
 //Euler's formula
+document.getElementById("a-euler").value = 3
+document.getElementById("b-euler").value = 2
 function eulerForm(p) {
     let motion, memory, motionIndex, progress
     let animationSpeed = 0.01;
 
     function reset() {
-        const v1 = new makeVector(2, -2)
-        const v2 = new makeVector(v1.magnitude, 0)
+
+        const a_euler = Number(document.getElementById("a-euler").value) || 0;
+        const b_euler = Number(document.getElementById("b-euler").value) || 0;
+
+        const v1 = new makeVector(a_euler, b_euler, "Vector")
+        const v2 = new makeVector(v1.magnitude, 0, "Radius")
+
+        document.getElementById("euler-readout").value = `${v1.magnitude.toFixed(2)}e ^ (i * ${v1.argument.toFixed(2)}rad)`
         motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'circle', p: v1, q: 0 },
             { op: 'rotate', p: v2, q: v1.argument }
         ];
+
         memory = []
         motionIndex = 0
         progress = 0
@@ -229,10 +279,10 @@ function eulerForm(p) {
     p.backStep = backStep
 
     p.setup = function () {
-        const box = document.getElementById("euler-form-canvas")
+        const box = document.getElementById("euler-canvas")
         p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
     }
-    p.windowResized = function () { fit(p, "euler-form-canvas") }
+    p.windowResized = function () { fit(p, "euler-canvas") }
     p.draw = function () {
         p.background("#E5CBBA");
         renderGraph(p, graph_colour, 3)
@@ -258,9 +308,9 @@ function eulerForm(p) {
     }
 }
 let eulerFormSim = new p5(eulerForm)
-function resetEulerForm() { eulerFormSim.reset() }
-function nextEulerForm() { eulerFormSim.nextStep() }
-function backEulerForm() { eulerFormSim.backStep() }
+function resetEuler() { eulerFormSim.reset() }
+function nextEuler() { eulerFormSim.nextStep() }
+function backEuler() { eulerFormSim.backStep() }
 
 //Multiplication
 function multiplication(p) {

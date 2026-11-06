@@ -132,22 +132,48 @@ function renderVector(p, colour, vector, progress) {
     p.pop();
 }
 function renderInlineVectorLabeles(p, text, colour, vector, progress) {
+
     p.push();
 
-    const mx = vector.origin_x + (vector.real_coff * progress) / 2
-    const my = vector.origin_y + (vector.img_coff * progress) / 2
-    p.translate(mx * unit, -my * unit)
+    let mx = vector.origin_x + vector.real_coff * progress;
+    let my = vector.origin_y + vector.img_coff * progress;
 
-    let angle = -vector.argument
-    const flipped = Math.abs(vector.argument) > Math.PI / 2
-    if (flipped) angle += Math.PI
-    p.rotate(angle)
+    p.translate(mx * unit, -my * unit);
 
+    let angle = -vector.argument;
+    let flipped = Math.cos(angle) < 0;
+
+    p.rotate(flipped ? angle + Math.PI : angle);
+
+    let fontSize = p.constrain(6 + Math.log1p(vector.magnitude) * 8, 6, 32);
+
+    p.textSize(fontSize);
+    p.textAlign(p.LEFT, p.CENTER);
+
+    let textWidth = p.textWidth(text);
+    let paddingX = 6;
+    let paddingY = 4;
+    let arrowHead = Math.min(0.3, vector.magnitude * progress / 2) * unit;
+    let gap = 14;
+
+    let direction = flipped ? -1 : 1;
+    let offset = direction * (arrowHead + gap);
+
+    p.rectMode(p.CENTER);
     p.noStroke();
-    p.fill(colour);
-    p.textSize(16);
+    p.fill(229, 203, 186, 220);
+
+    p.rect(
+        offset + direction * textWidth / 2,
+        0,
+        textWidth + paddingX * 2,
+        fontSize + paddingY * 2,
+        5
+    );
+
+    p.fill("#000000");
     p.textAlign(p.CENTER, p.CENTER);
-    p.text(text, 0, flipped ? 16 : -16)
+    p.text(text, offset + direction * textWidth / 2, 0);
 
     p.pop();
 }
@@ -224,7 +250,7 @@ function renderVectorLabel(p, text, colour, vector, progress) {
     p.rotate(vector.argument);
     p.noStroke();
     p.fill(colour);
-    p.textSize(16);
+    p.textSize(vector.magnitude / 2);
     p.textAlign(p.CENTER, p.CENTER);
 
     let mx = (vector.real_coff * progress) / 2
@@ -237,7 +263,7 @@ function renderVectorLabel(p, text, colour, vector, progress) {
 function renderMemory(p, memory) {
     for (let i = 0; i < memory.length; i++) {
         let current = memory[i]
-        renderVector(p, current['colour'], current['vector'], 1)
+        renderVector(p, current['colour'] + "88", current['vector'], 1)
     }
 }
 function clearFromMemory(step, memory) {
@@ -278,27 +304,33 @@ function renderStep(p, step, e, memory) {
     }
 
     if (step.op === 'rotate') {
+        const a = step.q * e
+        const current = new makeVector(step.p.magnitude * Math.cos(a), step.p.magnitude * Math.sin(a), "Radius")
 
-        // roatated vector
-        let rotated_vector = new makeVector(
-            step.p.magnitude * Math.cos(step.q * e),
-            step.p.magnitude * Math.sin(step.q * e)
-        )
-        renderVector(p, actionable_colour, rotated_vector, 1)
+        renderCircle(p, actionable_colour, step.p, 1)
+        renderVector(p, actionable_colour, current, 1)
 
         if (e >= 1) {
-            step.p.real_coff = step.p.magnitude * Math.cos(step.q * e)
-            step.p.img_coff = step.p.magnitude * Math.sin(step.q * e)
-            memory.push({ colour: resultant_colour, vector: step.p })
+            memory.push({ colour: actionable_colour, vector: current })
         }
     }
+
+    if (step.op === 'render') {
+
+        renderVector(p, compontent_colour, step.p, e)
+
+        if (e >= 1) {
+            memory.push({ colour: compontent_colour, vector: step.p })
+        }
+    }
+
     if (step.op === '+') {
 
         // render both vectors
         renderVector(p, compontent_colour, step.p, 1)
         renderVector(p, compontent_colour, step.q, 1)
         // renders sum vectors
-        let sum = new makeVector(step.p.real_coff + step.q.real_coff, step.p.img_coff + step.q.img_coff)
+        let sum = new makeVector(step.p.real_coff + step.q.real_coff, step.p.img_coff + step.q.img_coff, step.label)
         renderVector(p, resultant_colour, sum, e)
 
         if (e >= 1) {
