@@ -1,6 +1,7 @@
 ﻿operator,p,q,result,action
 make,vector1,NaN,renderVector(vector1),Creates vector by joining components
 join,vector1,vector 2,animated vector 1 and 2 tip to tail,Visualization befor addition
+rotate,vector1,theta,rotates vector 1 over theta,
 """+""",vector1,vector2,"makeVector(vector1+vector2), render(vector1+vector2)",Adds 2 vectors
 """-""",vector1,NaN,Flips Vector,Reverses the vector
 """*""",vector1,vector 2,streches coordinate axis to make vector 1 unit vector,Multiplies the vector by scaling them 

@@ -171,6 +171,75 @@ function resetSubtraction() { subtractionSim.reset() }
 function nextSubtraction() { subtractionSim.nextStep() }
 function backSubtraction() { subtractionSim.backStep() }
 
+//Euler's formula
+function eulerForm(p) {
+    let motion, memory, motionIndex, progress
+    let animationSpeed = 0.01;
+
+    function reset() {
+        const v1 = new makeVector(2, -2)
+        const v2 = new makeVector(v1.magnitude, 0)
+        motion = [
+            { op: 'make', p: v1, q: 0 },
+            { op: 'circle', p: v1, q: 0 },
+            { op: 'rotate', p: v2, q: v1.argument }
+        ];
+        memory = []
+        motionIndex = 0
+        progress = 0
+    }
+    reset()
+    p.reset = reset
+
+    function nextStep() {
+        if (motionIndex >= motion.length) return;
+        renderStep(p, motion[motionIndex], 1, memory);
+        motionIndex++;
+        progress = 0;
+    }
+    p.nextStep = nextStep
+
+    function backStep() {
+        if (motionIndex <= 0) return;
+        motionIndex--;
+        progress = 0;
+    }
+    p.backStep = backStep
+
+    p.setup = function () {
+        const box = document.getElementById("euler-form-canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { fit(p, "euler-form-canvas") }
+    p.draw = function () {
+        p.background("#E5CBBA");
+        renderGraph(p, graph_colour, 3)
+
+        if (motionIndex < motion.length) {
+            let step = motion[motionIndex];
+
+            progress += animationSpeed;
+            if (progress >= 1) {
+                progress = 1;
+            }
+
+            renderStep(p, step, progress, memory);
+            renderMemory(p, memory);
+
+            if (progress >= 1) {
+                motionIndex++; progress = 0;
+            }
+        }
+        if (motionIndex >= motion.length) {
+            renderMemory(p, memory);
+        }
+    }
+}
+let eulerFormSim = new p5(eulerForm)
+function resetEulerForm() { eulerFormSim.reset() }
+function nextEulerForm() { eulerFormSim.nextStep() }
+function backEulerForm() { eulerFormSim.backStep() }
+
 //Multiplication
 function multiplication(p) {
     let motion, memory, motionIndex, progress
@@ -251,7 +320,7 @@ function division(p) {
         motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'make', p: v2, q: 0 },
-            { op: '*', p: v1, q: v2 }
+            { op: '/', p: v1, q: v2 }
         ];
         memory = []
         motionIndex = 0

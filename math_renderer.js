@@ -6,7 +6,7 @@ let graph_colour = "#347A68"
 let actionable_graph_colour = "#A66B35"
 
 // To make vectors in the format (a + ib)
-function makeVector(a = 0, b = 0) {
+function makeVector(a = 0, b = 0, label = "") {
     this.real_coff = a;
     this.img_coff = b;
     this.magnitude = Math.pow(Math.pow(a, 2) + Math.pow(b, 2), 0.5)
@@ -20,6 +20,7 @@ function makeVector(a = 0, b = 0) {
     this.print_output = function () {
         return this.real_coff + " + " + this.img_coff + "i";
     }
+    this.label = label
 }
 
 //To render grid
@@ -119,6 +120,31 @@ function renderVector(p, colour, vector, progress) {
         vector.origin_x * unit, -vector.origin_y * unit,
         end_x * unit, -end_y * unit
     );
+
+    if (vector.label != "") {
+        renderInlineVectorLabeles(p, vector.label, colour, vector, progress)
+    }
+
+    p.pop();
+}
+function renderInlineVectorLabeles(p, text, colour, vector, progress) {
+    p.push();
+
+    const mx = vector.origin_x + (vector.real_coff * progress) / 2
+    const my = vector.origin_y + (vector.img_coff * progress) / 2
+    p.translate(mx * unit, -my * unit)
+
+    let angle = -vector.argument
+    const flipped = Math.abs(vector.argument) > Math.PI / 2
+    if (flipped) angle += Math.PI
+    p.rotate(angle)
+
+    p.noStroke();
+    p.fill(colour);
+    p.textSize(16);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.text(text, 0, flipped ? 16 : -16)
+
     p.pop();
 }
 
@@ -174,6 +200,36 @@ function translateVector(p, colour, vector, progress, end_vector) {
     p.pop();
 }
 
+// Reders a circle
+function renderCircle(p, colour, vector, progress) {
+    p.push();
+    p.translate(p.width / 2, p.height / 2);
+    p.stroke(colour);
+    p.strokeWeight(2);
+    p.noFill();
+
+    const radius = vector.magnitude * progress;
+    p.ellipse(vector.origin_x * unit, -vector.origin_y * unit, radius * unit * 2, radius * unit * 2)
+    p.pop();
+}
+
+// Renders a label
+function renderVectorLabel(p, text, colour, vector, progress) {
+    p.push();
+    p.translate(p.width / 2, p.height / 2);
+    p.rotate(vector.argument);
+    p.noStroke();
+    p.fill(colour);
+    p.textSize(16);
+    p.textAlign(p.CENTER, p.CENTER);
+
+    let mx = (vector.real_coff * progress) / 2
+    let my = (vector.img_coff * progress) / 2
+
+    p.text(text, mx * unit, my * unit - 16)
+    p.pop();
+}
+
 function renderMemory(p, memory) {
     for (let i = 0; i < memory.length; i++) {
         let current = memory[i]
@@ -213,6 +269,21 @@ function renderStep(p, step, e, memory) {
         if (e >= 1) {
             step.q.origin_x = step.p.end_x();
             step.q.origin_y = step.p.end_y();
+            memory.push({ colour: resultant_colour, vector: step.p })
+        }
+    }
+    if (step.op === 'rotate') {
+
+        // roatated vector
+        let rotated_vector = new makeVector(
+            step.p.magnitude * Math.cos(step.q * e),
+            step.p.magnitude * Math.sin(step.q * e)
+        )
+        renderVector(p, actionable_colour, rotated_vector, 1)
+
+        if (e >= 1) {
+            step.p.real_coff = step.p.magnitude * Math.cos(step.q * e)
+            step.p.img_coff = step.p.magnitude * Math.sin(step.q * e)
             memory.push({ colour: resultant_colour, vector: step.p })
         }
     }
@@ -314,6 +385,18 @@ function renderStep(p, step, e, memory) {
     }
     if (step.op === '^') {
 
+    }
+    if (step.op === 'circle') {
+        //circle unit vector
+        let circle_unit = new makeVector(step.p.magnitude, 0, "Radius");
+
+        renderVector(p, compontent_colour, step.p, 1)
+        renderVector(p, actionable_colour, circle_unit, e)
+        renderCircle(p, actionable_colour, step.p, e)
+
+        if (e >= 1) {
+            memory.push({ colour: compontent_colour, vector: step.p })
+        }
     }
 }
 
