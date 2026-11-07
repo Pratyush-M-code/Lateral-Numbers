@@ -125,55 +125,49 @@ function renderVector(p, colour, vector, progress) {
         end_x * unit, -end_y * unit
     );
 
-    if (vector.label != "") {
+    if (vector.label) {
         renderInlineVectorLabeles(p, vector.label, colour, vector, progress)
     }
 
     p.pop();
 }
 function renderInlineVectorLabeles(p, text, colour, vector, progress) {
-
     p.push();
 
-    let mx = vector.origin_x + vector.real_coff * progress;
-    let my = vector.origin_y + vector.img_coff * progress;
+    const tipX = (vector.origin_x + vector.real_coff * progress) * unit;
+    const tipY = -(vector.origin_y + vector.img_coff * progress) * unit;
 
-    p.translate(mx * unit, -my * unit);
-
-    let angle = -vector.argument;
-    let flipped = Math.cos(angle) < 0;
-
-    p.rotate(flipped ? angle + Math.PI : angle);
-
-    let fontSize = p.constrain(6 + Math.log1p(vector.magnitude) * 8, 6, 32);
-
+    const fontSize = p.constrain(6 + Math.log1p(vector.magnitude) * 8, 6, 14);
     p.textSize(fontSize);
-    p.textAlign(p.LEFT, p.CENTER);
 
-    let textWidth = p.textWidth(text);
-    let paddingX = 6;
-    let paddingY = 4;
-    let arrowHead = Math.min(0.3, vector.magnitude * progress / 2) * unit;
-    let gap = 14;
+    const textWidth = p.textWidth(text);
+    const paddingX = 6, paddingY = 4;
+    const halfW = textWidth / 2 + paddingX;
+    const halfH = fontSize / 2 + paddingY;
 
-    let direction = flipped ? -1 : 1;
-    let offset = direction * (arrowHead + gap);
+    const dirX = Math.cos(vector.argument);
+    const dirY = -Math.sin(vector.argument);
+
+    const arrowHead = Math.min(0.3, vector.magnitude * progress / 2) * unit;
+    const gap = 8;
+    const reach = arrowHead + gap + Math.abs(dirX) * halfW + Math.abs(dirY) * halfH;
+
+    let labelX = tipX + dirX * reach;
+    let labelY = tipY + dirY * reach;
+
+    labelX = p.constrain(labelX, -p.width / 2 + halfW, p.width / 2 - halfW);
+    labelY = p.constrain(labelY, -p.height / 2 + halfH, p.height / 2 - halfH);
+
+    p.translate(labelX, labelY);
 
     p.rectMode(p.CENTER);
     p.noStroke();
     p.fill(229, 203, 186, 220);
-
-    p.rect(
-        offset + direction * textWidth / 2,
-        0,
-        textWidth + paddingX * 2,
-        fontSize + paddingY * 2,
-        5
-    );
+    p.rect(0, 0, halfW * 2, halfH * 2, 5);
 
     p.fill("#000000");
     p.textAlign(p.CENTER, p.CENTER);
-    p.text(text, offset + direction * textWidth / 2, 0);
+    p.text(text, 0, 0);
 
     p.pop();
 }

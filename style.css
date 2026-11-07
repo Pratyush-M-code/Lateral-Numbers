@@ -1,3 +1,13 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: clip;
+}
+
 :root {
     --bg: #f4efe2;
     --header: rgba(250, 245, 230, 0.85);
@@ -29,6 +39,21 @@ body {
     padding: 0;
     margin: 0;
     overflow-x: hidden;
+}
+
+@media (max-width: 1000px) {
+
+    #title,
+    #navigation {
+        width: 100%;
+        margin: 0;
+        padding: 10px 5vw;
+    }
+}
+
+header,
+footer {
+    width: auto;
 }
 
 header {
@@ -146,6 +171,15 @@ input {
     margin-top: 4px;
 }
 
+@media (max-width: 1000px) {
+
+    #title,
+    #navigation {
+        width: 100%;
+        margin: 0;
+        padding: 10px 5vw;
+    }
+}
 
 #title {
     width: 50%;
@@ -217,34 +251,28 @@ a:hover {
     flex-direction: row;
 }
 
-#canvas {
+#canvas,
+.explainer {
     display: block;
     width: 90%;
-    height: 100vh;
     margin: 3vh auto;
     padding: 0;
+    height: 80vh;
+}
+
+#canvas {
+    height: 100vh;
     clip-path: none;
 }
 
 .explainer {
-    width: 90%;
-    height: 70vh;
-    margin: 3vh auto;
-    padding: 0;
+    aspect-ratio: 2 / 1;
 }
 
 #canvas canvas,
 .explainer canvas {
     display: block;
-}
-
-.explainer canvas {
-    display: block;
-    width: 90%;
-    aspect-ratio: 1 / 2;
-    margin: 3vh auto;
-    padding: 0;
-    clip-path: none;
+    margin: 0;
 }
 
 .site-footer {
