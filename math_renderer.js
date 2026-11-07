@@ -251,25 +251,21 @@ function renderArc(p, colour, vector, theta, progress) {
     p.strokeWeight(2);
     p.noFill();
 
-    p.arc(vector.origin_x * unit, -vector.origin_y * unit, vector.magnitude * unit / 2, vector.magnitude * unit / 2, -vector.argument, -(vector.argument + theta * progress), p.OPEN)
+    p.arc(vector.origin_x * unit, -vector.origin_y * unit, vector.magnitude * unit / 2, vector.magnitude * unit / 2, -(vector.argument + theta * progress), -vector.argument, p.OPEN)
 
     p.pop();
 }
 
 // Renders a label
-function renderVectorLabel(p, text, colour, vector, progress) {
+function renderLabel(p, text, colour, x, y) {
     p.push();
     p.translate(p.width / 2, p.height / 2);
-    p.rotate(vector.argument);
     p.noStroke();
     p.fill(colour);
-    p.textSize(vector.magnitude / 2);
+    p.textSize(16);
     p.textAlign(p.CENTER, p.CENTER);
 
-    let mx = (vector.real_coff * progress) / 2
-    let my = (vector.img_coff * progress) / 2
-
-    p.text(text, mx * unit, my * unit - 16)
+    p.text(text, x * unit, y * unit)
     p.pop();
 }
 
@@ -323,8 +319,10 @@ function renderStep(p, step, e, memory) {
         renderCircle(p, actionable_colour, step.p, 1)
         renderVector(p, actionable_colour, current, 1)
         renderArc(p, actionable_colour, step.p, step.q, e)
+        renderLabel(p, "θ", actionable_colour, step.p.origin_x + (step.p.magnitude / 3.5) * Math.cos(step.p.argument - (step.q * e) / 2), step.p.origin_y + (step.p.magnitude / 3.5) * Math.sin(step.p.argument - (step.q * e) / 2))
 
         if (e >= 1) {
+            current.label = "Resultant"
             memory.push({ colour: actionable_colour, vector: current })
         }
     }

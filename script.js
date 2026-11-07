@@ -30,6 +30,69 @@ window.addEventListener("load", () => {
     });
 });
 
+// Global functions
+function setVariables(operation) {
+    const a = Number(document.getElementById(`a-${operation}`).value) || 0;
+    const b = Number(document.getElementById(`b-${operation}`).value) || 0;
+    const c = Number(document.getElementById(`c-${operation}`).value) || 0;
+    const d = Number(document.getElementById(`d-${operation}`).value) || 0;
+    return {
+        a, b, c, d,
+        v1: new makeVector(a, b, "Vector 1"),
+        v1_real: new makeVector(a, 0, "Real Coff. 1"),
+        v1_img: new makeVector(0, b, "Img Coff. 1"),
+        v2: new makeVector(c, d, "Vector 2"),
+        v2_real: new makeVector(c, 0, "Real Coff. 2"),
+        v2_img: new makeVector(0, d, "Img Coff. 2"),
+    }
+}
+function makeStepControls(p, state) {
+    function nextStep() {
+        if (state.motionIndex >= state.motion.length) return;
+        renderStep(p, state.motion[state.motionIndex], 1, state.memory);
+        state.motionIndex++;
+        state.progress = 0;
+    }
+
+    function backStep() {
+        if (state.motionIndex <= 0) return;
+        state.motionIndex--;
+        state.progress = 0;
+        rebuildMemory(p, state.motion, state.motionIndex, state.memory);
+    }
+
+    return { nextStep, backStep };
+}
+function isVisible(el) {
+    const rect = el.getBoundingClientRect();
+    return rect.bottom > 0 && rect.top < window.innerHeight;
+}
+function makeDrawLoop(p, bgColour, state, animationSpeed, canvasId) {
+    const box = document.getElementById(canvasId)
+    return function () {
+        if (!isVisible(box)) return;
+        p.background(bgColour);
+        renderGraph(p, graph_colour, 3);
+
+        if (state.motionIndex < state.motion.length) {
+            let step = state.motion[state.motionIndex];
+            state.progress += animationSpeed;
+            if (state.progress >= 1) state.progress = 1;
+
+            renderStep(p, step, state.progress, state.memory);
+            renderMemory(p, state.memory);
+
+            if (state.progress >= 1) {
+                state.motionIndex++;
+                state.progress = 0;
+            }
+        } else {
+            renderMemory(p, state.memory);
+        }
+    };
+}
+
+
 // Addition
 document.getElementById("a-addition").value = 4
 document.getElementById("b-addition").value = 2
@@ -37,26 +100,15 @@ document.getElementById("c-addition").value = -6
 document.getElementById("d-addition").value = -1
 
 function addition(p) {
-    let motion, memory, motionIndex, progress
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
     let animationSpeed = 0.01;
 
     function reset() {
+        const { a, b, c, d, v1, v1_real, v1_img, v2, v2_real, v2_img } = setVariables("addition");
 
-        const a_addition = Number(document.getElementById("a-addition").value) || 0;
-        const b_addition = Number(document.getElementById("b-addition").value) || 0;
-        const c_addition = Number(document.getElementById("c-addition").value) || 0;
-        const d_addition = Number(document.getElementById("d-addition").value) || 0;
+        document.getElementById("additon-readout").value = `${a + c} + ${b + d}i`
 
-        const v1 = new makeVector(a_addition, b_addition, "Vector 1")
-        const v1_real = new makeVector(a_addition, 0, "Real Coff. 1")
-        const v1_img = new makeVector(0, b_addition, "Img Coff. 1")
-        const v2 = new makeVector(c_addition, d_addition, "Vector 2")
-        const v2_real = new makeVector(c_addition, 0, "Real Coff. 2")
-        const v2_img = new makeVector(0, d_addition, "Img Coff. 2")
-
-        document.getElementById("additon-readout").value = `${a_addition + c_addition} + ${b_addition + d_addition}i`
-
-        motion = [
+        state.motion = [
             { op: 'render', p: v1_real, q: 0 },
             { op: 'render', p: v1_img, q: 0 },
             { op: 'make', p: v1, q: 0 },
@@ -70,59 +122,23 @@ function addition(p) {
             { op: 'join', p: v1, q: v2 },
             { op: '+', p: v1, q: v2, label: "Resultant" },
         ];
-        memory = []
-        motionIndex = 0
-        progress = 0
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
     }
     reset()
     p.reset = reset
 
-    function nextStep() {
-        if (motionIndex >= motion.length) return;
-        renderStep(p, motion[motionIndex], 1, memory);
-        motionIndex++;
-        progress = 0;
-    }
-    p.nextStep = nextStep
-
-    function backStep() {
-        if (motionIndex <= 0) return;
-
-        motionIndex--;
-        progress = 0;
-
-        rebuildMemory(p, motion, motionIndex, memory);
-    }
-    p.backStep = backStep
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
 
     p.setup = function () {
         const box = document.getElementById("addition-canvas")
         p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
     }
     p.windowResized = function () { fit(p, "addition-canvas") }
-    p.draw = function () {
-        p.background("#E5CBBA");
-        renderGraph(p, graph_colour, 3)
-
-        if (motionIndex < motion.length) {
-            let step = motion[motionIndex];
-
-            progress += animationSpeed;
-            if (progress >= 1) {
-                progress = 1;
-            }
-
-            renderStep(p, step, progress, memory);
-            renderMemory(p, memory);
-
-            if (progress >= 1) {
-                motionIndex++; progress = 0;
-            }
-        }
-        if (motionIndex >= motion.length) {
-            renderMemory(p, memory);
-        }
-    }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "addition-canvas");
 }
 let additionSim = new p5(addition)
 function resetAddition() { additionSim.reset() }
@@ -135,27 +151,16 @@ document.getElementById("b-subtraction").value = 2
 document.getElementById("c-subtraction").value = -2
 document.getElementById("d-subtraction").value = 1
 function subtraction(p) {
-    let motion, memory, motionIndex, progress
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
     let animationSpeed = 0.01;
 
     function reset() {
 
-        const a_subtraction = Number(document.getElementById("a-subtraction").value) || 0;
-        const b_subtraction = Number(document.getElementById("b-subtraction").value) || 0;
-        const c_subtraction = Number(document.getElementById("c-subtraction").value) || 0;
-        const d_subtraction = Number(document.getElementById("d-subtraction").value) || 0;
+        const { a, b, c, d, v1, v1_real, v1_img, v2, v2_real, v2_img } = setVariables("subtraction");
 
-        const v1 = new makeVector(a_subtraction, b_subtraction, "Vector 1")
-        const v1_real = new makeVector(a_subtraction, 0, "Real Coff. 1")
-        const v1_img = new makeVector(0, b_subtraction, "Img Coff. 1")
-        const v2 = new makeVector(c_subtraction, d_subtraction, "Vector 2")
-        const v2_real = new makeVector(c_subtraction, 0, "Real Coff. 2")
-        const v2_img = new makeVector(0, d_subtraction, "Img Coff. 2")
+        document.getElementById("subtraction-readout").value = `${a - c} + ${b - d}i`
 
-
-        document.getElementById("subtraction-readout").value = `${a_subtraction - c_subtraction} + ${b_subtraction - d_subtraction}i`
-
-        motion = [
+        state.motion = [
             { op: 'render', p: v1_real, q: 0 },
             { op: 'render', p: v1_img, q: 0 },
             { op: 'make', p: v1, q: 0 },
@@ -172,59 +177,23 @@ function subtraction(p) {
             { op: '-', p: v2, q: 0 },
             { op: '+', p: v1, q: v2, label: "Resultant" },
         ];
-        memory = []
-        motionIndex = 0
-        progress = 0
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
     }
     reset()
     p.reset = reset
 
-    function nextStep() {
-        if (motionIndex >= motion.length) return;
-        renderStep(p, motion[motionIndex], 1, memory);
-        motionIndex++;
-        progress = 0;
-    }
-    p.nextStep = nextStep
-
-    function backStep() {
-        if (motionIndex <= 0) return;
-
-        motionIndex--;
-        progress = 0;
-
-        rebuildMemory(p, motion, motionIndex, memory);
-    }
-    p.backStep = backStep
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
 
     p.setup = function () {
         const box = document.getElementById("subtraction-canvas")
         p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
     }
     p.windowResized = function () { fit(p, "subtraction-canvas") }
-    p.draw = function () {
-        p.background("#E5CBBA");
-        renderGraph(p, graph_colour, 3)
-
-        if (motionIndex < motion.length) {
-            let step = motion[motionIndex];
-
-            progress += animationSpeed;
-            if (progress >= 1) {
-                progress = 1;
-            }
-
-            renderStep(p, step, progress, memory);
-            renderMemory(p, memory);
-
-            if (progress >= 1) {
-                motionIndex++; progress = 0;
-            }
-        }
-        if (motionIndex >= motion.length) {
-            renderMemory(p, memory);
-        }
-    }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "subtraction-canvas");
 }
 let subtractionSim = new p5(subtraction)
 function resetSubtraction() { subtractionSim.reset() }
@@ -235,7 +204,7 @@ function backSubtraction() { subtractionSim.backStep() }
 document.getElementById("a-euler").value = 3
 document.getElementById("b-euler").value = 2
 function eulerForm(p) {
-    let motion, memory, motionIndex, progress
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
     let animationSpeed = 0.01;
 
     function reset() {
@@ -247,65 +216,29 @@ function eulerForm(p) {
         const v2 = new makeVector(v1.magnitude, 0, "Radius")
 
         document.getElementById("euler-readout").value = `${v1.magnitude.toFixed(2)}e ^ (i * ${v1.argument.toFixed(2)}rad)`
-        motion = [
+        state.motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'circle', p: v1, q: 0 },
             { op: 'rotate', p: v2, q: v1.argument }
         ];
 
-        memory = []
-        motionIndex = 0
-        progress = 0
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
     }
     reset()
     p.reset = reset
 
-    function nextStep() {
-        if (motionIndex >= motion.length) return;
-        renderStep(p, motion[motionIndex], 1, memory);
-        motionIndex++;
-        progress = 0;
-    }
-    p.nextStep = nextStep
-
-    function backStep() {
-        if (motionIndex <= 0) return;
-
-        motionIndex--;
-        progress = 0;
-
-        rebuildMemory(p, motion, motionIndex, memory);
-    }
-    p.backStep = backStep
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
 
     p.setup = function () {
         const box = document.getElementById("euler-canvas")
         p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
     }
     p.windowResized = function () { fit(p, "euler-canvas") }
-    p.draw = function () {
-        p.background("#E5CBBA");
-        renderGraph(p, graph_colour, 3)
-
-        if (motionIndex < motion.length) {
-            let step = motion[motionIndex];
-
-            progress += animationSpeed;
-            if (progress >= 1) {
-                progress = 1;
-            }
-
-            renderStep(p, step, progress, memory);
-            renderMemory(p, memory);
-
-            if (progress >= 1) {
-                motionIndex++; progress = 0;
-            }
-        }
-        if (motionIndex >= motion.length) {
-            renderMemory(p, memory);
-        }
-    }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "euler-canvas");
 }
 let eulerFormSim = new p5(eulerForm)
 function resetEuler() { eulerFormSim.reset() }
@@ -318,84 +251,37 @@ document.getElementById("b-multiplication").value = 1
 document.getElementById("c-multiplication").value = 2
 document.getElementById("d-multiplication").value = 1
 function multiplication(p) {
-    let motion, memory, motionIndex, progress
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
     let animationSpeed = 0.01;
 
     function reset() {
 
-        const a_multiplication = Number(document.getElementById("a-multiplication").value) || 0;
-        const b_multiplication = Number(document.getElementById("b-multiplication").value) || 0;
-        const c_multiplication = Number(document.getElementById("c-multiplication").value) || 0;
-        const d_multiplication = Number(document.getElementById("d-multiplication").value) || 0;
+        const { a, b, c, d, v1, v1_real, v1_img, v2, v2_real, v2_img } = setVariables("multiplication");
 
-        const v1 = new makeVector(a_multiplication, b_multiplication, "Vector 1")
-        const v1_real = new makeVector(a_multiplication, 0, "Real Coff. 1")
-        const v1_img = new makeVector(0, b_multiplication, "Img Coff. 1")
-        const v2 = new makeVector(c_multiplication, d_multiplication, "Vector 2")
-        const v2_real = new makeVector(c_multiplication, 0, "Real Coff. 2")
-        const v2_img = new makeVector(0, d_multiplication, "Img Coff. 2")
+        document.getElementById("multiplication-readout").value = `${a * c - b * d} + ${a * d + b * c}i`
 
-
-        document.getElementById("multiplication-readout").value = `${a_multiplication * c_multiplication - b_multiplication * d_multiplication} + ${a_multiplication * d_multiplication + b_multiplication * c_multiplication}i`
-
-        motion = [
+        state.motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'make', p: v2, q: 0 },
             { op: '*', p: v1, q: v2, label: "Resultant" },
         ];
-        memory = []
-        motionIndex = 0
-        progress = 0
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
     }
     reset()
     p.reset = reset
 
-    function nextStep() {
-        if (motionIndex >= motion.length) return;
-        renderStep(p, motion[motionIndex], 1, memory);
-        motionIndex++;
-        progress = 0;
-    }
-    p.nextStep = nextStep
-
-    function backStep() {
-        if (motionIndex <= 0) return;
-
-        motionIndex--;
-        progress = 0;
-
-        rebuildMemory(p, motion, motionIndex, memory);
-    }
-    p.backStep = backStep
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
 
     p.setup = function () {
         const box = document.getElementById("multiplication-canvas")
         p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
     }
-    p.windowResized = function () { fit(p, "multiplication -canvas") }
-    p.draw = function () {
-        p.background("#E5CBBA");
-        renderGraph(p, graph_colour, 3)
-
-        if (motionIndex < motion.length) {
-            let step = motion[motionIndex];
-
-            progress += animationSpeed;
-            if (progress >= 1) {
-                progress = 1;
-            }
-
-            renderStep(p, step, progress, memory);
-            renderMemory(p, memory);
-
-            if (progress >= 1) {
-                motionIndex++; progress = 0;
-            }
-        }
-        if (motionIndex >= motion.length) {
-            renderMemory(p, memory);
-        }
-    }
+    p.windowResized = function () { fit(p, "multiplication-canvas") }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "multiplication-canvas");
 }
 let multiplicationSim = new p5(multiplication)
 function resetMultiplication() { multiplicationSim.reset() }
@@ -408,84 +294,37 @@ document.getElementById("b-division").value = 1
 document.getElementById("c-division").value = 2
 document.getElementById("d-division").value = 1
 function division(p) {
-    let motion, memory, motionIndex, progress
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
     let animationSpeed = 0.01;
 
     function reset() {
 
-        const a_division = Number(document.getElementById("a-division").value) || 0;
-        const b_division = Number(document.getElementById("b-division").value) || 0;
-        const c_division = Number(document.getElementById("c-division").value) || 0;
-        const d_division = Number(document.getElementById("d-division").value) || 0;
+        const { a, b, c, d, v1, v1_real, v1_img, v2, v2_real, v2_img } = setVariables("division");
 
-        const v1 = new makeVector(a_division, b_division, "Vector 1")
-        const v1_real = new makeVector(a_division, 0, "Real Coff. 1")
-        const v1_img = new makeVector(0, b_division, "Img Coff. 1")
-        const v2 = new makeVector(c_division, d_division, "Vector 2")
-        const v2_real = new makeVector(c_division, 0, "Real Coff. 2")
-        const v2_img = new makeVector(0, d_division, "Img Coff. 2")
+        document.getElementById("division-readout").value = `${(a * c + b * d) / (c ** 2 + d ** 2)} + ${(b * c - a * d) / (c ** 2 + d ** 2)}i`
 
-
-        document.getElementById("division-readout").value = `${(a_division * c_division + b_division * d_division) / (c_division ** 2 + d_division ** 2)} + ${(b_division * c_division - a_division * d_division) / (c_division ** 2 + d_division ** 2)}i`
-
-        motion = [
+        state.motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'make', p: v2, q: 0 },
             { op: '/', p: v1, q: v2, label: "Resultant" },
         ];
-        memory = []
-        motionIndex = 0
-        progress = 0
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
     }
     reset()
     p.reset = reset
 
-    function nextStep() {
-        if (motionIndex >= motion.length) return;
-        renderStep(p, motion[motionIndex], 1, memory);
-        motionIndex++;
-        progress = 0;
-    }
-    p.nextStep = nextStep
-
-    function backStep() {
-        if (motionIndex <= 0) return;
-
-        motionIndex--;
-        progress = 0;
-
-        rebuildMemory(p, motion, motionIndex, memory);
-    }
-    p.backStep = backStep
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
 
     p.setup = function () {
         const box = document.getElementById("division-canvas")
         p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
     }
-    p.windowResized = function () { fit(p, "division -canvas") }
-    p.draw = function () {
-        p.background("#E5CBBA");
-        renderGraph(p, graph_colour, 3)
-
-        if (motionIndex < motion.length) {
-            let step = motion[motionIndex];
-
-            progress += animationSpeed;
-            if (progress >= 1) {
-                progress = 1;
-            }
-
-            renderStep(p, step, progress, memory);
-            renderMemory(p, memory);
-
-            if (progress >= 1) {
-                motionIndex++; progress = 0;
-            }
-        }
-        if (motionIndex >= motion.length) {
-            renderMemory(p, memory);
-        }
-    }
+    p.windowResized = function () { fit(p, "division-canvas") }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "division-canvas");
 }
 let divisionSim = new p5(division)
 function resetDivision() { divisionSim.reset() }
