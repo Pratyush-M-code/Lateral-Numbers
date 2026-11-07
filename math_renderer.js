@@ -243,6 +243,19 @@ function renderCircle(p, colour, vector, progress) {
     p.pop();
 }
 
+// Renders an arc
+function renderArc(p, colour, vector, theta, progress) {
+    p.push();
+    p.translate(p.width / 2, p.height / 2);
+    p.stroke(colour);
+    p.strokeWeight(2);
+    p.noFill();
+
+    p.arc(vector.origin_x * unit, -vector.origin_y * unit, vector.magnitude * unit / 2, vector.magnitude * unit / 2, -vector.argument, -(vector.argument + theta * progress), p.OPEN)
+
+    p.pop();
+}
+
 // Renders a label
 function renderVectorLabel(p, text, colour, vector, progress) {
     p.push();
@@ -309,6 +322,7 @@ function renderStep(p, step, e, memory) {
 
         renderCircle(p, actionable_colour, step.p, 1)
         renderVector(p, actionable_colour, current, 1)
+        renderArc(p, actionable_colour, step.p, step.q, e)
 
         if (e >= 1) {
             memory.push({ colour: actionable_colour, vector: current })

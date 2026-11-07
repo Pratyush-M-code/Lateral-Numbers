@@ -11,7 +11,6 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 - [Features](#features)
 - [Usage](#usage)
 - [Screenshots](#screenshots)
-- [FAQ](#faq)
 - [Acknowledgments](#acknowledgments)
 - [License](#license)
 
@@ -27,10 +26,56 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 
 ### Operations
 
-- `Addition(+):` To add 2 complex numbers together
-- `Subtraction(-):` To subtract 2 complex numbers.
-- `Multiplication(*):` To scale the cartestian plane to multiply 2 complex numbers together.
-- `Division(/):` To scale the cartestian plane with respect to a vector to divide 2 complex numbers together.
+#### `Addition(+):` To add 2 complex numbers together
+
+- Render the real component of vector 1 (v1_real)
+- Render the imaginary component of vector 1 (v1_img)
+- Make vector 1 (v1)
+- Render the real component of vector 2 (v2_real)
+- Render the imaginary component of vector 2 (v2_img)
+- Make vector 2 (v2)
+- Join the real components (v2_real to the tip of v1_real)
+- Add the real components (label: “Real Coff Resultant”)
+- Join the imaginary components (v2_img to the tip of v1_img)
+- Add the imaginary components (label: “Img Coff. Resultant”)
+- Join vector 2 to the tip of vector 1 (v2 to v1)
+- Add the vectors (label: “Resultant”)
+
+#### `Subtraction(-):` To subtract 2 complex numbers
+
+- Render the real component of vector 1 (v1_real)
+- Render the imaginary component of vector 1 (v1_img)
+- Make vector 1 (v1)
+- Render the real component of vector 2 (v2_real)
+- Render the imaginary component of vector 2 (v2_img)
+- Make vector 2 (v2)
+- Join the real components (v2_real to the tip of v1_real)
+- Flip the real component of vector 2 (- v2_real)
+- Add the real components (label: “Real Coff Resultant”)
+- Join the imaginary components (v2_img to the tip of v1_img)
+- Flip the imaginary component of vector 2 (- v2_img)
+- Add the imaginary components (label: “Img Coff. Resultant”)
+- Join vector 2 to the tip of vector 1 (v2 to v1)
+- Flip vector 2 (- v2)
+- Add the vectors (label: “Resultant”)
+
+#### `Euler's Form:` To convert a complex vector from a + ib to re^(iθ)
+
+- Make vector 1 (v1)
+- Draw the circle through the tip of v1, with radius v1.magnitude
+- Rotate the radius vector (v2) from the real axis up to v1, sweeping the angle θ (v1.argument)
+
+#### `Multiplication(*):` To scale the cartestian plane to multiply 2 complex numbers together
+
+- Make vector 1 (v1)
+- Make vector 2 (v2)
+- Multiply the vectors (label: “Resultant”)
+
+#### `Division(/):` To scale the cartestian plane with respect to a vector to divide 2 complex numbers together
+
+- Make vector 1 (v1)
+- Make vector 2 (v2)
+- Divide the vectors (label: “Resultant”)
 
 ### Tech Stack
 
@@ -38,22 +83,64 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 
 #### math_renderer.js
 
-- `makeVector(a = 0, b = 0)`
+##### Conventions
+
+- `p` → sim's p5 instance.
+- Vectors → grid units.
+- `progress` / `e` → 0 to 1.
+
+##### Data
+
+- `makeVector(a = 0, b = 0, label = "")`
   - `a` → real coeff.
   - `b` → img coeff.
+  - `label` → vector text.
 
-- `renderGraph(p, colour = graph_colour, weight = "3", progress = null, unit_vector = null)`
-  - `progress` → for animating.
-  - `unit_vector` → the basis vectors of the graph axis.
+##### Rendering
+
+- `renderGraph(p, colour = graph_colour, weight = 3, progress = null, unit_vector = null)`
+  - `weight` → axis thickness.
+  - `progress` → animation fraction.
+  - `unit_vector` → where 1 lands.
 
 - `renderVector(p, colour, vector, progress)`
-  - `vector` → vector to be animated.
-  - `progress` → for animating.
+  - `vector` → vector drawn.
+  - `progress` → length drawn.
 
 - `translateVector(p, colour, vector, progress, end_vector)`
-  - `vector` → vector to be translated.
-  - `progress` → for animating.
-  - `end_vector` → defines the end point of the vector.
+  - `vector` → vector moved.
+  - `progress` → move fraction.
+  - `end_vector` → destination tip.
+
+- `renderCircle(p, colour, vector, progress)`
+  - `vector` → radius vector.
+  - `progress` → radius drawn.
+
+- `renderArc(p, colour, vector, theta, progress)`
+  - `vector` → start, radius.
+  - `theta` → sweep angle.
+  - `progress` → sweep drawn.
+
+- `renderVectorLabel(p, text, colour, vector, progress)`
+  - `text` → label text.
+  - `vector` → labelled vector.
+  - `progress` → vector length.
+
+##### Memory
+
+- `renderMemory(p, memory)`
+  - `memory` → stored vectors.
+
+- `clearFromMemory(step, memory)`
+  - `step` → step's vectors.
+  - `memory` → list edited.
+
+##### Steps
+
+- `renderStep(p, step, e, memory)`
+  - `step` → `{ op, p, q }`.
+  - `e` → step progress.
+  - `memory` → results stored.
 
 ## Usage
 
@@ -62,12 +149,6 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 ## Screenshots
 
 ![Screenshot](assets/Screenshot%202026-11-02%20091335.png)
-
-## FAQ
-
-### When will this be completed?
-
-By Nov 10th?
 
 ## Acknowledgments
 
