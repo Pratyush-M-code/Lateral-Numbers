@@ -382,7 +382,8 @@ function renderStep(p, step, e, memory) {
         if (e >= 1) {
             let product = new makeVector(
                 step.p.real_coff * step.q.real_coff - step.p.img_coff * step.q.img_coff,
-                step.p.real_coff * step.q.img_coff + step.p.img_coff * step.q.real_coff
+                step.p.real_coff * step.q.img_coff + step.p.img_coff * step.q.real_coff,
+                step.label
             );
             memory.push({ colour: resultant_colour, vector: product })
         }
@@ -415,7 +416,8 @@ function renderStep(p, step, e, memory) {
         if (e >= 1) {
             let quotient = new makeVector(
                 (step.p.real_coff * step.q.real_coff + step.p.img_coff * step.q.img_coff) / divsior_magnitude,
-                (step.p.img_coff * step.q.real_coff - step.p.real_coff * step.q.img_coff) / divsior_magnitude
+                (step.p.img_coff * step.q.real_coff - step.p.real_coff * step.q.img_coff) / divsior_magnitude,
+                step.label
             )
             memory.push({ colour: resultant_colour, vector: quotient })
         }

@@ -313,17 +313,35 @@ function nextEuler() { eulerFormSim.nextStep() }
 function backEuler() { eulerFormSim.backStep() }
 
 //Multiplication
+document.getElementById("a-multiplication").value = -2
+document.getElementById("b-multiplication").value = 1
+document.getElementById("c-multiplication").value = 2
+document.getElementById("d-multiplication").value = 1
 function multiplication(p) {
     let motion, memory, motionIndex, progress
     let animationSpeed = 0.01;
 
     function reset() {
-        const v1 = new makeVector(2, -2)
-        const v2 = new makeVector(1, 3)
+
+        const a_multiplication = Number(document.getElementById("a-multiplication").value) || 0;
+        const b_multiplication = Number(document.getElementById("b-multiplication").value) || 0;
+        const c_multiplication = Number(document.getElementById("c-multiplication").value) || 0;
+        const d_multiplication = Number(document.getElementById("d-multiplication").value) || 0;
+
+        const v1 = new makeVector(a_multiplication, b_multiplication, "Vector 1")
+        const v1_real = new makeVector(a_multiplication, 0, "Real Coff. 1")
+        const v1_img = new makeVector(0, b_multiplication, "Img Coff. 1")
+        const v2 = new makeVector(c_multiplication, d_multiplication, "Vector 2")
+        const v2_real = new makeVector(c_multiplication, 0, "Real Coff. 2")
+        const v2_img = new makeVector(0, d_multiplication, "Img Coff. 2")
+
+
+        document.getElementById("multiplication-readout").value = `${a_multiplication * c_multiplication - b_multiplication * d_multiplication} + ${a_multiplication * d_multiplication + b_multiplication * c_multiplication}i`
+
         motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'make', p: v2, q: 0 },
-            { op: '*', p: v1, q: v2 }
+            { op: '*', p: v1, q: v2, label: "Resultant" },
         ];
         memory = []
         motionIndex = 0
@@ -385,17 +403,35 @@ function nextMultiplication() { multiplicationSim.nextStep() }
 function backMultiplication() { multiplicationSim.backStep() }
 
 //Division
+document.getElementById("a-division").value = -2
+document.getElementById("b-division").value = 1
+document.getElementById("c-division").value = 2
+document.getElementById("d-division").value = 1
 function division(p) {
     let motion, memory, motionIndex, progress
     let animationSpeed = 0.01;
 
     function reset() {
-        const v1 = new makeVector(2, -2)
-        const v2 = new makeVector(1, 3)
+
+        const a_division = Number(document.getElementById("a-division").value) || 0;
+        const b_division = Number(document.getElementById("b-division").value) || 0;
+        const c_division = Number(document.getElementById("c-division").value) || 0;
+        const d_division = Number(document.getElementById("d-division").value) || 0;
+
+        const v1 = new makeVector(a_division, b_division, "Vector 1")
+        const v1_real = new makeVector(a_division, 0, "Real Coff. 1")
+        const v1_img = new makeVector(0, b_division, "Img Coff. 1")
+        const v2 = new makeVector(c_division, d_division, "Vector 2")
+        const v2_real = new makeVector(c_division, 0, "Real Coff. 2")
+        const v2_img = new makeVector(0, d_division, "Img Coff. 2")
+
+
+        document.getElementById("division-readout").value = `${(a_division * c_division + b_division * d_division) / (c_division ** 2 + d_division ** 2)} + ${(b_division * c_division - a_division * d_division) / (c_division ** 2 + d_division ** 2)}i`
+
         motion = [
             { op: 'make', p: v1, q: 0 },
             { op: 'make', p: v2, q: 0 },
-            { op: '/', p: v1, q: v2 }
+            { op: '/', p: v1, q: v2, label: "Resultant" },
         ];
         memory = []
         motionIndex = 0

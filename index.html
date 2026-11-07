@@ -185,9 +185,48 @@
                 <button onclick="nextEuler()">Next</button>
             </div>
         </div>
-
         <div class="content" id="multiplication">
-            <h2>What is complex multiplication?</h2>
+            <div class="text">
+                <h2>What is complex multiplication?</h2>
+                <p>Complex multiplication is the process of multiplying two complex numbers.<br>
+                    For example:- (a + bi) * (c + di)<br>
+                    = (ac - bd) + (ad + bc)i<br>
+                </p>
+                <h3>Visualize!</h3>
+                <p>In the graph, vector 1 is first drawn, then vector 2 is drawn. To multiply the two vectors, the
+                    intuitive way
+                    to think about it is to transform the grid itself. The grid is rotated and stretched so that the
+                    number 1
+                    on the real axis lands on vector 1, which means the grid is turned by the angle of vector 1 and
+                    scaled
+                    by its length. Vector 2 is carried along with the grid, and where it ends up is the product. In
+                    other
+                    words, multiplying adds the angles and multiplies the lengths!<br>
+                    Click the Replay button to see your equation rendered.</p>
+                <h3>Try it out!</h3>
+                <p>
+                    ( <span class="feild">
+                        <input class="integer" id="a-multiplication" type="text" inputmode="numeric">
+                        <label for="a-multiplication" class="field-note">Real part (a)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="b-multiplication" type="text" inputmode="numeric">
+                        <label for="b-multiplication" class="field-note">Imaginary part (b)</label>
+                    </span>) -
+                    (<span class="feild">
+                        <input class="integer" id="c-multiplication" type="text" inputmode="numeric">
+                        <label for="c-multiplication" class="field-note">Real part (c)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="d-multiplication" type="text" inputmode="numeric">
+                        <label for="d-multiplication" class="field-note">Imaginary part (d)</label>
+                    </span>i) =
+                    <span class="feild">
+                        <output id="multiplication-readout"></output>
+                        <label for="multiplication-readout" class="field-note">Resultant</label>
+                    </span>
+                </p>
+            </div>
             <div class="canvas explainer" id="multiplication-canvas">
                 <!-- Content here -->
             </div>
@@ -198,7 +237,47 @@
             </div>
         </div>
         <div class="content" id="division">
-            <h2>What is complex division?</h2>
+            <div class="text">
+                <h2>What is complex division?</h2>
+                <p>Complex division is the process of dividing two complex numbers.<br>
+                    For example:- (a + bi) / (c + di)<br>
+                    = ((ac + bd) / (c² + d²)) + ((bc - ad) / (c² + d²))i<br>
+                </p>
+                <h3>Visualize!</h3>
+                <p>In the graph, vector 1 is first drawn, then vector 2 is drawn. Division is multiplication in reverse,
+                    so the
+                    intuitive way to think about it is to transform the grid itself. The grid is rotated and shrunk or
+                    stretched
+                    until vector 2 lands exactly on the number 1 on the real axis, which means the grid is turned
+                    backwards by the
+                    angle of vector 2 and scaled by one over its length. Vector 1 is carried along with the grid, and
+                    where it
+                    ends up is the quotient. In other words, dividing subtracts the angles and divides the lengths!<br>
+                    Click the Replay button to see your equation rendered.</p>
+                <h3>Try it out!</h3>
+                <p>
+                    ( <span class="feild">
+                        <input class="integer" id="a-division" type="text" inputmode="numeric">
+                        <label for="a-division" class="field-note">Real part (a)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="b-division" type="text" inputmode="numeric">
+                        <label for="b-division" class="field-note">Imaginary part (b)</label>
+                    </span>) -
+                    (<span class="feild">
+                        <input class="integer" id="c-division" type="text" inputmode="numeric">
+                        <label for="c-division" class="field-note">Real part (c)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="d-division" type="text" inputmode="numeric">
+                        <label for="d-division" class="field-note">Imaginary part (d)</label>
+                    </span>i) =
+                    <span class="feild">
+                        <output id="division-readout"></output>
+                        <label for="division-readout" class="field-note">Resultant</label>
+                    </span>
+                </p>
+            </div>
             <div class="canvas explainer" id="division-canvas">
                 <!-- Content here -->
             </div>
