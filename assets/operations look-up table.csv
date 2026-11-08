@@ -1,9 +1,10 @@
 ﻿operator,p,q,result,action
-make,vector1,NaN,renderVector(vector1),Creates vector by joining components
-join,vector1,vector 2,animated vector 1 and 2 tip to tail,Visualization befor addition
-rotate,vector1,theta,rotates vector 1 over theta,
-"""+""",vector1,vector2,"makeVector(vector1+vector2), render(vector1+vector2)",Adds 2 vectors
-"""-""",vector1,NaN,Flips Vector,Reverses the vector
-"""*""",vector1,vector 2,streches coordinate axis to make vector 1 unit vector,Multiplies the vector by scaling them 
-"""/""",,,,
-"""^""",,,,
+make,vector1,NaN,reders real/imaginary components then vector1,Builds a vector from its components
+render,vector1,NaN,renders vector1,Draws a vector with no components
+join,vector1,vector 2,moves vector 2 to join vector 1 from tip to tail,Positions vectors for addition/subtraction
+rotate,vector1,theta,rotates vector 1 over theta,Used for Euler's form
+"""+""",vector1,vector2,makeVector(vector1+vector2), Adds 2 vectors and generates resultant
+"""-""",vector1,NaN,flips vector1,Used for subtraction
+"""*""",vector1,vector 2,makeVector(vector1*vector2),Scales and rotates the plane by vector1
+"""/""",vector1,vector 2,makeVector(vector1/vector2),Scales and rotates the plane by 1/vector2
+"""^""",vector1,n (integer),makeVector(vector1^n),Scales and rotates the plane by vector1 repeated n−1 times

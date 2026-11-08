@@ -65,6 +65,14 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 - Draw the circle through the tip of v1, with radius v1.magnitude
 - Rotate the radius vector (v2) from the real axis up to v1, sweeping the angle θ (v1.argument)
 
+#### `Reverse Euler's Form:` To convert a complex vector from re^(iθ) to a + ib
+
+- Render radius 'r'
+- Rotate the radius vector from the real axis, sweeping the angle θ
+- Render the real component of vector (v1_real)
+- Render the imaginary component of vector (v1_img)
+- Make vector 1
+
 #### `Multiplication(*):` To scale the cartestian plane to multiply 2 complex numbers together
 
 - Make vector 1 (v1)
@@ -76,6 +84,11 @@ To forgo the name "imaginary numbers", I have chosen Gauss's preferred terminolo
 - Make vector 1 (v1)
 - Make vector 2 (v2)
 - Divide the vectors (label: “Resultant”)
+
+#### `Exponentiation(^):` To raise a complex number to an integer power
+
+- Make vector 1 (v1)
+- Raise vector 1 to the power n (label: “Resultant”)
 
 ### Tech Stack
 
