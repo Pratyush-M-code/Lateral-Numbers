@@ -188,6 +188,29 @@
                 <button onclick="resetEuler()">Replay</button>
                 <button onclick="nextEuler()">Next</button>
             </div>
+            <div class="text">
+                <h3>Try it out in reverse!</h3>
+                <p>
+                    <span class="feild">
+                        <input class="integer" id="a-reverseeuler" type="text" inputmode="decimal">
+                        <label for="a-reverseeuler" class="field-note">Real part (a)</label>
+                    </span>e ^ (i *
+                    <span class="feild">
+                        <input class="integer" id="b-reverseeuler" type="text" inputmode="decimal">
+                        <label for="reverseeuler" class="field-note">Imaginary part (b)</label>
+                    </span> rad) =
+                    <span class="feild">
+                        <output id="reverseeuler-readout"></output>
+                        <label for="reverseeuler-readout" class="field-note">(a+ib)</label>
+                    </span>
+                </p>
+            </div>
+            <div class="canvas explainer" id="reverseeuler-canvas"></div>
+            <div class="controls">
+                <button onclick="backReverseEuler()">Previous</button>
+                <button onclick="resetReverseEuler()">Replay</button>
+                <button onclick="nextReverseEuler()">Next</button>
+            </div>
         </div>
         <div class="content" id="multiplication">
             <div class="text">

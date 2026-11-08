@@ -502,5 +502,6 @@ function loadEquation() {
     } catch (error) {
         sandboxSim.load([]);
         console.error(error.message);
+        window.alert("Error: " + error.message);
     }
 }   

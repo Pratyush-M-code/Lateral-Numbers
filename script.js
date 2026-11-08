@@ -245,6 +245,57 @@ function resetEuler() { eulerFormSim.reset() }
 function nextEuler() { eulerFormSim.nextStep() }
 function backEuler() { eulerFormSim.backStep() }
 
+// Reverse Euler's formula
+document.getElementById("a-reverseeuler").value = 3
+document.getElementById("b-reverseeuler").value = 2
+function reverseeuler(p) {
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
+    let animationSpeed = 0.01;
+
+    function reset() {
+
+        const r = Number(document.getElementById("a-reverseeuler").value) || 0;
+        const theta = Number(document.getElementById("b-reverseeuler").value) || 0;
+
+        const radius = new makeVector(r, 0, "Radius")
+        const v1 = new makeVector(r * Math.cos(theta), r * Math.sin(theta), "Vector")
+        const v1_real = new makeVector(v1.real_coff, 0, "Real Coff.")
+        const v1_img = new makeVector(0, v1.img_coff, "Img Coff.")
+
+        document.getElementById("reverseeuler-readout").value =
+            `${v1.real_coff.toFixed(2)} + ${v1.img_coff.toFixed(2)}i`
+
+        state.motion = [
+            { op: 'render', p: radius, q: 0 },
+            { op: 'rotate', p: radius, q: theta, label: "Vector" },
+            { op: 'render', p: v1_real, q: 0 },
+            { op: 'render', p: v1_img, q: 0 },
+            { op: 'make', p: v1, q: 0 },
+        ];
+
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
+    }
+    reset()
+    p.reset = reset
+
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
+
+    p.setup = function () {
+        const box = document.getElementById("reverseeuler-canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { fit(p, "reverseeuler-canvas") }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "reverseeuler-canvas");
+}
+let reverseeulerSim = new p5(reverseeuler)
+function resetReverseEuler() { reverseeulerSim.reset() }
+function nextReverseEuler() { reverseeulerSim.nextStep() }
+function backReverseEuler() { reverseeulerSim.backStep() }
+
 //Multiplication
 document.getElementById("a-multiplication").value = -2
 document.getElementById("b-multiplication").value = 1
