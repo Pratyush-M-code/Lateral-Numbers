@@ -216,7 +216,7 @@
                     <span class="feild">
                         <input class="integer" id="b-multiplication" type="text" inputmode="numeric">
                         <label for="b-multiplication" class="field-note">Imaginary part (b)</label>
-                    </span>i) -
+                    </span>i) *
                     (<span class="feild">
                         <input class="integer" id="c-multiplication" type="text" inputmode="numeric">
                         <label for="c-multiplication" class="field-note">Real part (c)</label>
@@ -267,7 +267,7 @@
                     <span class="feild">
                         <input class="integer" id="b-division" type="text" inputmode="numeric">
                         <label for="b-division" class="field-note">Imaginary part (b)</label>
-                    </span>i) -
+                    </span>i) /
                     (<span class="feild">
                         <input class="integer" id="c-division" type="text" inputmode="numeric">
                         <label for="c-division" class="field-note">Real part (c)</label>
@@ -291,15 +291,62 @@
                 <button onclick="nextDivision()">Next</button>
             </div>
         </div>
+        <div class="content" id="exponentiation">
+            <div class="text">
+                <h2>What is complex exponentiation?</h2>
+                <p>Complex exponentiation by an integer is repeated multiplication of a complex number by itself.<br>
+                    For example:- (a + bi)^n<br>
+                    = r^n * (cos(nθ) + i·sin(nθ)), where r is the magnitude and θ is the argument of (a + bi)<br>
+                </p>
+                <h3>Visualize!</h3>
+                <p>In the graph, vector 1 is drawn first. Raising it to the power n is just multiplying the grid
+                    by vector 1, n - 1 more times in a row — so the grid rotates by θ and scales by r for
+                    every extra power. The vector sweeps along with the grid, ending n times further rotated and r^n
+                    times
+                    longer than where it started. In other words, exponentiation multiplies the angle by n and raises
+                    the length
+                    to the nth power!<br>
+                    Click the Replay button to see your equation rendered.</p>
+                <h3>Try it out!</h3>
+                <p>
+                    ( <span class="feild">
+                        <input class="integer" id="a-exponentiation" type="text" inputmode="numeric">
+                        <label for="a-exponentiation" class="field-note">Real part (a)</label>
+                    </span> +
+                    <span class="feild">
+                        <input class="integer" id="b-exponentiation" type="text" inputmode="numeric">
+                        <label for="b-exponentiation" class="field-note">Imaginary part (b)</label>
+                    </span>i) ^
+                    (<span class="feild">
+                        <input class="integer" id="c-exponentiation" type="text" inputmode="numeric">
+                        <label for="c-exponentiation" class="field-note">Real part (c)</label>
+                    </span> + 0i) =
+                    <span class="feild">
+                        <output id="exponentiation-readout"></output>
+                        <label for="exponentiation-readout" class="field-note">Resultant</label>
+                    </span>
+                </p>
+            </div>
+            <div class="canvas explainer" id="exponentiation-canvas">
+                <!-- Content here -->
+            </div>
+            <div class="controls">
+                <button onclick="backExponentiation()">Previous</button>
+                <button onclick="resetExponentiation()">Replay</button>
+                <button onclick="nextExponentiation()">Next</button>
+            </div>
+        </div>
         <div class="content" id="explanation">
             <h2>How should I use this?</h2>
             <p>Currently this project is extremely basic.</p>
             <p>4 Operations are accepted => <br>
                 - Addition(+): To add 2 complex numbers together<br>
                 - Subtraction(-): To subtract 2 complex numbers.<br>
-                - Multiplication(*): To scale the cartestian plane to multiply 2 complex numbers together.
+                - Multiplication(*): To scale the cartestian plane to multiply 2 complex numbers together.<br>
                 - Division(/): To scale the cartestian plane with respect to a vector to divide 2 complex numbers
-                together.
+                together.<br>
+                - Exponentiation(^): To scale the cartestian plane with respect to a real vector to exponentiate a
+                complex number. To use this you must use (a + 0i) as the second operant.<br>
             </p>
             <h3>Keep in Mind</h3>
             <p>- All complex numbers are to be declared in the following format => (a + bi)<br>

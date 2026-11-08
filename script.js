@@ -331,6 +331,55 @@ function resetDivision() { divisionSim.reset() }
 function nextDivision() { divisionSim.nextStep() }
 function backDivision() { divisionSim.backStep() }
 
+//Exponentiation
+document.getElementById("a-exponentiation").value = 3
+document.getElementById("b-exponentiation").value = 2
+document.getElementById("c-exponentiation").value = 2
+function exponentiation(p) {
+    let state = { motion: [], memory: [], motionIndex: 0, progress: 0 };
+    let animationSpeed = 0.01;
+
+    function reset() {
+
+        const a_exponentiation = Number(document.getElementById("a-exponentiation").value) || 0;
+        const b_exponentiation = Number(document.getElementById("b-exponentiation").value) || 0;
+        const n_exponentiation = Number(document.getElementById("c-exponentiation").value) || 0;
+
+        const v1 = new makeVector(a_exponentiation, b_exponentiation, "Vector1")
+
+        const resultMag = Math.pow(v1.magnitude, n_exponentiation);
+        const resultArg = v1.argument * n_exponentiation;
+        document.getElementById("exponentiation-readout").value =
+            `${(resultMag * Math.cos(resultArg)).toFixed(2)} + ${(resultMag * Math.sin(resultArg)).toFixed(2)}i`
+
+        state.motion = [
+            { op: 'make', p: v1, q: 0 },
+            { op: '^', p: v1, q: n_exponentiation, label: "Resultant" }
+        ];
+
+        state.memory = []
+        state.motionIndex = 0
+        state.progress = 0
+    }
+    reset()
+    p.reset = reset
+
+    const controls = makeStepControls(p, state);
+    p.nextStep = controls.nextStep;
+    p.backStep = controls.backStep;
+
+    p.setup = function () {
+        const box = document.getElementById("exponentiation-canvas")
+        p.createCanvas(box.clientWidth, box.clientHeight).parent(box)
+    }
+    p.windowResized = function () { fit(p, "exponentiation-canvas") }
+    p.draw = makeDrawLoop(p, "#E5CBBA", state, animationSpeed, "exponentiation-canvas");
+}
+let exponentiationSim = new p5(exponentiation)
+function resetExponentiation() { exponentiationSim.reset() }
+function nextExponentiation() { exponentiationSim.nextStep() }
+function backExponentiation() { exponentiationSim.backStep() }
+
 // Zoom Handler
 let zoom_readout = document.getElementById("zoom_readout")
 function zoom_in() {
@@ -354,7 +403,7 @@ typeBox.addEventListener("keypress", function (event) {
         loadEquation()
     }
 });
-const valid_operators = ['+', '-', '*', '/']
+const valid_operators = ['+', '-', '*', '/', '^']
 function parseText(text) {
     let steps = [];
     let arr = text.split('')
@@ -430,6 +479,17 @@ function parseText(text) {
 
     if (!valid_operators.includes(operator)) {
         throw new Error("Invalid operator")
+    }
+
+    if (operator === '^') {
+        let exponent = textToVector(first.index + 1, normalized_arr);
+        if (exponent.value.img_coff !== 0) throw new Error("Exponent must be a real number");
+        if (!Number.isInteger(exponent.value.real_coff)) throw new Error("Exponent must be an integer");
+        let n = exponent.value.real_coff;
+        return [
+            { op: 'make', p: first.value, q: 0 },
+            { op: '^', p: first.value, q: n, label: "Resultant" }
+        ];
     }
 
     let second = textToVector(first.index + 1, normalized_arr);

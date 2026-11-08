@@ -429,7 +429,33 @@ function renderStep(p, step, e, memory) {
         }
     }
     if (step.op === '^') {
+        let n = step.q
+        let instant_power = 1 + (n - 1) * e;
 
+        let instant_argument = step.p.argument * instant_power;
+        let instant_magnitude = Math.pow(step.p.magnitude, instant_power);
+
+        let unit_vector = new makeVector(
+            Math.pow(step.p.magnitude, n - 1) * Math.cos(step.p.argument * (n - 1)),
+            Math.pow(step.p.magnitude, n - 1) * Math.sin(step.p.argument * (n - 1))
+        )
+        renderGraph(p, actionable_graph_colour, 2, e, unit_vector)
+        renderVector(p, compontent_colour, step.p, 1)
+
+        let current = new makeVector(
+            instant_magnitude * Math.cos(instant_argument),
+            instant_magnitude * Math.sin(instant_argument)
+        )
+        renderVector(p, resultant_colour, current, 1)
+
+        if (e >= 1) {
+            let power = new makeVector(
+                Math.pow(step.p.magnitude, n) * Math.cos(step.p.argument * n),
+                Math.pow(step.p.magnitude, n) * Math.sin(step.p.argument * n),
+                step.label
+            )
+            memory.push({ colour: resultant_colour, vector: power })
+        }
     }
     if (step.op === 'circle') {
         //circle unit vector
