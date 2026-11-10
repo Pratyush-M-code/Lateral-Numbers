@@ -469,21 +469,36 @@ function parseText(text) {
         }
     }
 
-    //decision tree
-    let bracket_loop = false;
+    if (normalized_arr.length === 0) {
+        throw new Error("Equation is empty")
+    }
 
-    // Number reader for negatives and decimals
-    function readNumber(i, array) {
+    // Number reader for negatives and decimals, now with optional real/imaginary parts
+    function readNumber(i, array, required = true) {
         let number = ""
+        let start = i
+
         if (array[i] === "-" || array[i] === '+') {
             number = number + String(array[i])
             i++
         }
 
-        digits = /[0-9.]/
+        let digits = /[0-9.]/
         while (i < array.length && (digits.test(array[i]))) {
             number = number + String(array[i])
             i++
+        }
+
+        let digitsRead = i - start - (number.startsWith("-") || number.startsWith("+") ? 1 : 0)
+
+        if (digitsRead === 0) {
+            if (required) throw new Error("Expected a number at position " + i)
+            // no number was written, caller treats this as an implied coefficient
+            return { value: null, index: start }
+        }
+
+        if ((number.match(/\./g) || []).length > 1) {
+            throw new Error("Number has more than one decimal point at position " + i)
         }
 
         return {
@@ -491,51 +506,88 @@ function parseText(text) {
             index: i
         }
     }
+
     function textToVector(i, array) {
         if (array[i] !== '(') {
-            throw new Error("opening bracket missing" + i)
+            throw new Error("Opening bracket missing at position " + i)
         }
-        else {
-            i++
+        i++
+
+        if (i >= array.length) {
+            throw new Error("Equation ends unexpectedly after position " + i)
         }
 
-        let real = readNumber(i, array)
+        // real part is optional — a leading "i" means real = 0
+        let real = readNumber(i, array, false)
         i = real.index
-        let imaginary = readNumber(i, array)
+        let realValue = real.value === null ? 0 : real.value
+
+        let imaginary
+        let imaginaryValue
+
+        if (array[i] === 'i') {
+            // only an "i" with no digits before it means the real part we just read
+            // was actually the imaginary coefficient, e.g. "(2i)" or "(-i)"
+            if (real.value === null) {
+                imaginaryValue = 1
+            } else {
+                imaginaryValue = realValue
+            }
+            realValue = 0
+            i++
+
+            if (array[i] === ')') {
+                i++
+                return { value: new makeVector(realValue, imaginaryValue), index: i }
+            }
+            throw new Error("Missing ) at position " + i)
+        }
+
+        imaginary = readNumber(i, array, true)
         i = imaginary.index
+        imaginaryValue = imaginary.value
 
         if (array[i] !== 'i') {
-            throw new Error("missing i");
+            throw new Error("Missing i at position " + i)
         }
-        else {
-            i++;
-        }
+        i++
 
         if (array[i] !== ')') {
-            throw new Error("missing )");
+            throw new Error("Missing ) at position " + i)
         }
-        else {
-            i++;
+        i++
+
+        if (!Number.isFinite(realValue) || !Number.isFinite(imaginaryValue)) {
+            throw new Error("Number is not finite at position " + i)
         }
 
         return {
-            value: new makeVector(real.value, imaginary.value),
+            value: new makeVector(realValue, imaginaryValue),
             index: i
         }
     }
 
-    //to do
     let first = textToVector(0, normalized_arr)
+
+    if (first.index >= normalized_arr.length) {
+        throw new Error("Equation ends after first vector, expected an operator")
+    }
+
     let operator = normalized_arr[first.index];
 
     if (!valid_operators.includes(operator)) {
-        throw new Error("Invalid operator")
+        throw new Error("Invalid operator '" + operator + "' at position " + first.index)
     }
 
     if (operator === '^') {
         let exponent = textToVector(first.index + 1, normalized_arr);
-        if (exponent.value.img_coff !== 0) throw new Error("Exponent must be a real number");
-        if (!Number.isInteger(exponent.value.real_coff)) throw new Error("Exponent must be an integer");
+
+        if (exponent.index !== normalized_arr.length) {
+            throw new Error("Unexpected characters after exponent at position " + exponent.index)
+        }
+        if (exponent.value.img_coff !== 0) throw new Error("Exponent must be a real number")
+        if (!Number.isInteger(exponent.value.real_coff)) throw new Error("Exponent must be an integer")
+
         let n = exponent.value.real_coff;
         return [
             { op: 'make', p: first.value, q: 0 },
@@ -544,6 +596,10 @@ function parseText(text) {
     }
 
     let second = textToVector(first.index + 1, normalized_arr);
+
+    if (second.index !== normalized_arr.length) {
+        throw new Error("Unexpected characters after second vector at position " + second.index)
+    }
 
     steps = []
     steps.push({ op: 'make', p: first.value, q: 0 });
