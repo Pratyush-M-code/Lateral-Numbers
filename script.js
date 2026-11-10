@@ -517,17 +517,22 @@ function parseText(text) {
             throw new Error("Equation ends unexpectedly after position " + i)
         }
 
-        // real part is optional — a leading "i" means real = 0
         let real = readNumber(i, array, false)
         i = real.index
         let realValue = real.value === null ? 0 : real.value
 
-        let imaginary
+        // (2) — purely real, no "i" at all
+        if (array[i] === ')') {
+            if (real.value === null) {
+                throw new Error("Empty parentheses at position " + i)
+            }
+            i++
+            return { value: new makeVector(realValue, 0), index: i }
+        }
+
         let imaginaryValue
 
         if (array[i] === 'i') {
-            // only an "i" with no digits before it means the real part we just read
-            // was actually the imaginary coefficient, e.g. "(2i)" or "(-i)"
             if (real.value === null) {
                 imaginaryValue = 1
             } else {
@@ -543,7 +548,7 @@ function parseText(text) {
             throw new Error("Missing ) at position " + i)
         }
 
-        imaginary = readNumber(i, array, true)
+        let imaginary = readNumber(i, array, true)
         i = imaginary.index
         imaginaryValue = imaginary.value
 
